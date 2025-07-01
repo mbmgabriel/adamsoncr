@@ -6,6 +6,9 @@ const { ResearchPurposeRoutes } = require("./research_purposes/research_purposes
 const { ResearchCategoryRoutes } = require("./research_categories/research_categories_routes");
 const { EndorsementRepresentativeRoutes } = require("./endorsement_representatives/endorsement_representatives_routes");
 const { DocumentTypesRoutes } = require("./document_types/document_types_routes");
+const { ResearchInvestigatorsRoutes } = require("./research_investigators/research_investigators_routes");
+const { EndorsementsRoutes } = require("./endorsements/endorsements_routes");
+const { ResearchDocumentsRoutes } = require("./research_documents/research_documents_routes");
 
 var router = express.Router();
 
@@ -16,5 +19,8 @@ router.use("/research_purposes", ResearchPurposeRoutes);
 router.use("/research_categories", ResearchCategoryRoutes);
 router.use("/endorsement_representatives", EndorsementRepresentativeRoutes);
 router.use("/document_types", DocumentTypesRoutes);
+router.use("/research_investigators", ResearchInvestigatorsRoutes);
+router.use("/endorsements", EndorsementsRoutes);
+router.use("/research_documents", ResearchDocumentsRoutes);
 
 module.exports = router;
