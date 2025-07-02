@@ -5,6 +5,8 @@
  *     ResearchDocuments:
  *       type: object
  *       properties:
+ *         research_id:
+ *           type: integer
  *         document_title_id:
  *           type: integer
  *         document_filepath:

@@ -9,6 +9,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      research_id: {
+        type: Sequelize.INTEGER
+      },
       document_title_id: {
         type: Sequelize.INTEGER
       },

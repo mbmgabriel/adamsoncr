@@ -15,18 +15,72 @@ const ResearchDocumentsController = {
 
     await sequelize.transaction(async (t) => {
       try {
-        const researchDocumentss = await ResearchDocuments.create({
+        const researchDocuments = await ResearchDocuments.create({
           document_title_id: req.body.document_title_id,
           document_filepath: req.body.document_filepath,
           created_at: req.user.id,
           },
           { transaction: t }
         );
-        res.status(CREATED).json({ResearchDocuments: researchDocumentss, Message: 'ResearchDocuments entry created.'});
+        res.status(CREATED).json({ResearchDocuments: researchDocuments, Message: 'ResearchDocuments entry created.'});
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
     });
+  },
+
+  uploadProfilePic: async (req, res) => {
+    let file = req.file;
+    if (!file || file.length === 0) {
+      return res.status(NOT_FOUND).json({ message: 'No file uploaded' });
+    }
+
+    if (!file.path) {
+      return res.status(PRECONDITION_FAILED).json({ message: 'Error uploading file' });
+    }
+
+    let filePath = file.path.split("storage")[1];
+
+    try {
+      if (!profilePic) {
+        await fs.promises.unlink(file.path);
+        return res.status(NOT_FOUND).json({ message: `No matching record for user_account_id: ${req.params.id}` });
+      }
+      await sequelize.transaction(async (t) => {
+        // Remove old profile image file if it exists and is different from new file
+        if (profilePic.profile_image && profilePic.profile_image !== filePath) {
+          try {
+            await fs.promises.unlink(`./storage${profilePic.profile_image}`);
+          } catch (error) {
+            if (error.code === "ENOENT") {
+              console.log(`File ${profilePic.profile_image} does not exist.`);
+            } else {
+              console.log(`Error deleting file ${profilePic.profile_image}: ${error.message}`);
+            }
+          }
+        }
+        await profilePic.update({
+          profile_image: filePath,
+          updated_by: req.user.id
+        }, { transaction: t });
+
+        res.status(OK).json(profilePic)
+        return;
+      });
+    } catch (error) {
+      if (filePath) {
+        try {
+          await fs.promises.unlink(file.path);
+        } catch (error) {
+          if (error.code === "ENOENT") {
+            console.log(`File ${filePath} does not exist.`);
+          } else {
+            console.log(`Error deleting file ${filePath}: ${error.message}`);
+          }
+        }
+      }
+      res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   },
 
   all: async (req, res) => {
