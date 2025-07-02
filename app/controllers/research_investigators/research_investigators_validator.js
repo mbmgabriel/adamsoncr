@@ -1,10 +1,10 @@
 const { Validator } = require("../../core/validator");
 
-const ResearchInvestigatorsValidator = (body, res) => {
+const researchInvestigatorsValidator = (body, res) => {
   const rules = {
-    // id: "required",
+    first_name: "required",
   };
   return new Validator(body, rules, res);
 };
 
-module.exports.ResearchInvestigatorsValidator = ResearchInvestigatorsValidator;
+module.exports.researchInvestigatorsValidator = researchInvestigatorsValidator;

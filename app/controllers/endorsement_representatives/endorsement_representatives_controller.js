@@ -32,7 +32,7 @@ const EndorsementRepresentativeController = {
     await sequelize.transaction(async (t) => {
       try {
         const endorsementRepresentatives = await EndorsementRepresentative.findAll({
-          attributes: ['rep_name'],
+          attributes: ['id','rep_name'],
         });
         res.status(OK).json({EndorsementRepresentative: endorsementRepresentatives});
       } catch (error) {
@@ -46,7 +46,7 @@ const EndorsementRepresentativeController = {
     await sequelize.transaction(async (t) => {
       try {
         const endorsementRepresentatives = await EndorsementRepresentative.findAll({
-          attributes: ['rep_name'],
+          attributes: ['id','rep_name'],
           where: {id: req.params.id},
         });
 

@@ -144,6 +144,8 @@ const upload_service = multer({
       const error = {
         status: UNSUPPORTED_MEDIA_TYPE,
         message: 'Please select a valid file type',
+        mimeType: mimeType,
+        extname: extname,
       };
       cb(error)
     }

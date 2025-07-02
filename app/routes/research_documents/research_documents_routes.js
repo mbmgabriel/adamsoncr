@@ -3,10 +3,11 @@ const router = express.Router()
 
 const { ResearchDocumentsController } = require('../../controllers/research_documents/research_documents_controller')
 const verify_user_account = require('../../middlewares/auth/verify_user_account')
+const { upload_service } = require('../../services/upload_service/upload_service')
 
 /**
  * @openapi
- * /api/v1/research_documents/create:
+ * /api/v1/research_documents/create/{research_id}/{document_title_id}:
  *   post:
  *     tags:
  *       - ResearchDocuments
@@ -20,15 +21,28 @@ const verify_user_account = require('../../middlewares/auth/verify_user_account'
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/ResearchDocumentssResponse'
+ *               $ref: '#/components/schemas/ResearchDocumentsResponse'
+ *     parameters:
+ *       - in: path
+ *         name: research_id
+ *         description: research_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: document_title_id
+ *         description: document_title_id
+ *         required: true
+ *         schema:
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/ResearchDocuments'
+ *             $ref: '#/components/schemas/documentUploadResponse'
  */
-router.post('/create', verify_user_account, ResearchDocumentsController.create)
+router.post('/create/:research_id/:document_title_id', verify_user_account, upload_service.single('document_filepath'), ResearchDocumentsController.create)
 /**
  *  @openapi
  *  /api/v1/research_documents/all:

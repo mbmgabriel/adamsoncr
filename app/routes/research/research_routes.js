@@ -73,6 +73,8 @@ router.get('/all', verify_user_account, ResearchController.all)
  *                $ref: '#/components/schemas/ResearchResponse'
  *      
 */
+
+
 router.get('/:id', verify_user_account, ResearchController.get)
 /**
  * @openapi

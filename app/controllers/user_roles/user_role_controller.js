@@ -33,7 +33,7 @@ const UserRoleController = {
     await sequelize.transaction(async (t) => {
       try {
         const userRoles = await UserRole.findAll({
-          attributes: ['role_name', 'role_desc'],
+          attributes: ['id','role_name', 'role_desc'],
         });
         res.status(OK).json({UserRole: userRoles});
       } catch (error) {
@@ -47,7 +47,7 @@ const UserRoleController = {
     await sequelize.transaction(async (t) => {
       try {
         const userRoles = await UserRole.findAll({
-          attributes: ['role_name', 'role_desc'],
+          attributes: ['id','role_name', 'role_desc'],
           where: {id: req.params.id},
         });
 

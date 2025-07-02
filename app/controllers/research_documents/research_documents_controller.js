@@ -13,19 +13,57 @@ const ResearchDocumentsController = {
       res.status(PRECONDITION_FAILED).json({message: 'ResearchDocuments required'});
     }
 
+    let file = req.file;
+    if (!file || file.length === 0) {
+      return res.status(NOT_FOUND).json({ message: 'No file uploaded' });
+    }
+
+    if (!file.path) {
+      return res.status(PRECONDITION_FAILED).json({ message: 'Error uploading file' });
+    }
+
+    let filePath = file.path.split("storage")[1];
+
     await sequelize.transaction(async (t) => {
       try {
-        const researchDocumentss = await ResearchDocuments.create({
-          document_title_id: req.body.document_title_id,
-          document_filepath: req.body.document_filepath,
+        const researchDocuments = await ResearchDocuments.create({
+          research_id: req.params.research_id,
+          document_title_id: req.params.document_title_id,
+          // document_filepath: req.body.document_filepath,
           created_at: req.user.id,
           },
           { transaction: t }
         );
-        res.status(CREATED).json({ResearchDocuments: researchDocumentss, Message: 'ResearchDocuments entry created.'});
+
+        if (!researchDocuments){
+          await fs.promises.unlink(file.path);
+          return res.status(PRECONDITION_FAILED).json({ message: `Upload Failed` });
+        }
+
+        await researchDocuments.update({
+          document_filepath: filePath,
+          updated_by: req.user.id
+        }, { transaction: t });
+
+        res.status(CREATED).json({ResearchDocuments: researchDocuments, Message: 'ResearchDocuments entry created.'});
       } catch (error) {
+        if (filePath) {
+          try {
+            await fs.promises.unlink(file.path);
+          } catch (error) {
+            if (error.code === "ENOENT") {
+              console.log(`File ${filePath} does not exist.`);
+            } else {
+              console.log(`Error deleting file ${filePath}: ${error.message}`);
+            }
+          }
+        }
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
+
+      // catch (error) {
+        // res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+      // }
     });
   },
 

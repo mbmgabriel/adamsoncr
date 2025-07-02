@@ -10,10 +10,16 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      models.ResearchDocuments.belongsTo(models.Research, {
+        foreignKey: "research_id",
+      }),
+      models.ResearchDocuments.belongsTo(models.DocumentTypes, {
+        foreignKey: "document_title_id",
+      });
     }
   }
   ResearchDocuments.init({
+    research_id: DataTypes.INTEGER,
     document_title_id: DataTypes.INTEGER,
     document_filepath: DataTypes.STRING,
     created_by: DataTypes.INTEGER,

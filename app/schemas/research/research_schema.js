@@ -16,7 +16,7 @@
  *         research_duration:
  *           type: string
  *         ethical_considerations:
- *           type: string
+ *           type: integer
  *         submitted_by:
  *           type: string
  *         submitted_date:

@@ -1,10 +1,10 @@
 const { Validator } = require("../../core/validator");
 
-const EndorsementsValidator = (body, res) => {
+const endorsementsValidator = (body, res) => {
   const rules = {
     // id: "required",
   };
   return new Validator(body, rules, res);
 };
 
-module.exports.EndorsementsValidator = EndorsementsValidator;
+module.exports.endorsementsValidator = endorsementsValidator;
