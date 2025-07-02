@@ -10,7 +10,7 @@
  *         endorsement_rep_id:
  *           type: integer
  *         status:
- *           type: integer
+ *           type: string
  *     EndorsementsResponse:
  *       allOf:
  *         - $ref: '#/components/schemas/Endorsements'

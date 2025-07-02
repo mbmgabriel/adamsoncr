@@ -33,7 +33,7 @@ const DocumentTypesController = {
     await sequelize.transaction(async (t) => {
       try {
         const documentTypess = await DocumentTypes.findAll({
-          attributes: ['document_name'],
+          attributes: ['id','document_name'],
         });
         res.status(OK).json({DocumentTypes: documentTypess});
       } catch (error) {
@@ -47,7 +47,7 @@ const DocumentTypesController = {
     await sequelize.transaction(async (t) => {
       try {
         const documentTypess = await DocumentTypes.findAll({
-          attributes: ['document_name'],
+          attributes: ['id','document_name'],
           where: {id: req.params.id},
         });
 

@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
       }),
       models.Research.hasMany(models.ResearchDocuments, {
         foreignKey: "research_id",
+      }),
+      models.Research.hasMany(models.Endorsements, {
+        foreignKey: "research_id",
       });
     }
   }

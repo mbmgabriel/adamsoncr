@@ -32,7 +32,7 @@ const ResearchPurposeController = {
     await sequelize.transaction(async (t) => {
       try {
         const researchPurposes = await ResearchPurpose.findAll({
-          attributes: ['purpose_name'],
+          attributes: ['id','purpose_name'],
         });
         res.status(OK).json({ResearchPurpose: researchPurposes});
       } catch (error) {
@@ -46,7 +46,7 @@ const ResearchPurposeController = {
     await sequelize.transaction(async (t) => {
       try {
         const ResearchPurposes = await ResearchPurpose.findAll({
-          attributes: ['purpose_name'],
+          attributes: ['id','purpose_name'],
           where: {id: req.params.id},
         });
 
