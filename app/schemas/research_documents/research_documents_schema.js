@@ -9,8 +9,6 @@
  *           type: integer
  *         document_title_id:
  *           type: integer
- *         document_filepath:
- *           type: string
  *     ResearchDocumentsResponse:
  *       allOf:
  *         - $ref: '#/components/schemas/ResearchDocuments'
@@ -19,4 +17,13 @@
  *       type: array
  *       items:
  *         $ref: '#/components/schemas/ResearchDocumentsResponse'
+ *     documentUploadResponse:
+ *       type: object
+ *       required:
+ *         - document_filepath 
+ *       properties:
+ *         document_filepath:
+ *           type: string
+ *           format: binary
+ *           default: 'sample'
  */
