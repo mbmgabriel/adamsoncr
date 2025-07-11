@@ -25,16 +25,10 @@ const { upload_service } = require('../../services/upload_service/upload_service
  *     parameters:
  *       - in: path
  *         name: research_id
- *         description: research_id
  *         required: true
- *         schema:
- *           type: integer
  *       - in: path
  *         name: document_title_id
- *         description: document_title_id
  *         required: true
- *         schema:
- *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -120,6 +114,44 @@ router.get('/:id', verify_user_account, ResearchDocumentsController.get)
  * 
  */
 router.put('/:id', verify_user_account, ResearchDocumentsController.update)
+
+/**
+ * @openapi
+ * /api/v1/research_documents/update/{research_id}/{document_title_id}:
+ *   put:
+ *     tags:
+ *       - ResearchDocuments
+ *     description: Update File ResearchDocuments API
+ *     summary: Update File ResearchDocuments
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: research_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: document_title_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: '#/components/schemas/documentUploadResponse'
+ *     responses:
+ *       200:
+ *         description: File updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ResearchDocumentsResponse'
+ */
+router.put('/update/:research_id/:document_title_id', verify_user_account, upload_service.single('document_filepath'), ResearchDocumentsController.documentUpdate);
+
 /**
  * @openapi
  * /api/v1/research_documents/{id}:
