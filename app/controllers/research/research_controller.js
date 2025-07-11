@@ -67,45 +67,65 @@ const ResearchController = {
             },
             {
               model: ResearchInvestigators,
-              attributes: ['research_id','id_number','first_name','middle_name','last_name','mobile_number','email','college','dept'],
+              attributes: ['id_number','first_name','middle_name','last_name','mobile_number','email','college','dept'],
             },
+            {
+              model: ResearchDocuments,
+              attributes: ['document_title_id','document_filepath'],
+              include: [
+                {
+                  model: DocumentTypes,
+                  attributes: ['document_name']
+                }
+              ]
+            }
           ]
         });
 
         const category_ids = research?.category?.split(",")?.map(item=>parseInt(item))
 
         const categories = await ResearchCategory.findAll({
-          attributes: ['research_name'],
+          attributes: ['id','research_name'],
           where: {id: category_ids}
         })
 
-        // research.categories = categories;
 
-        // const endorsements = research?.Endorsements;
-        // const research_investigators = research?.ResearchInvestigators;
+        const response = {
+          title: research?.title,
+          category: categories,
+          purpose_id: research?.purpose_id,
+          version_number: research?.version_number,
+          research_duration: research?.research_duration,
+          ethical_considerations: research?.ethical_considerations,
+          submitted_by: research?.submitted_by,
+          submitted_date: research?.submitted_date,
+          endorsements: research?.Endorsements?.map(e=> {
+              const rep = e?.EndorsementRepresentative
+              return ({
+                status: e?.status,
+                rep_name: rep?.rep_name,
+              })
+            }),
+          research_investigators: research?.ResearchInvestigators?.map(item => ({
+            id_number: item.id_number,
+            name: `${item?.first_name} ${item?.middle_name||''}${item?.middle_name?' ':''}${item?.last_name}`,
+            mobile_number: item.mobile_number,
+            email: item.email,
+            college: item.college,
+            dept: item.dept,
+          })),
+          research_documents: research?.ResearchDocuments?.map(item => {
+            const doc_type = item?.DocumentType;
+            return ({
+              document_title_id: item?.document_title_id,
+              document_filepath: item?.document_filepath,
+              document_name: doc_type?.document_name,
+            })
+          })
+        }
 
-        // const response = {
-        //   title: research?.title,
-        //   // category: research.category,
-        //   purpose_id: research.purpose_id,
-        //   version_number: research.version_number,
-        //   research_duration: research.research_duration,
-        //   ethical_considerations: research.ethical_considerations,
-        //   submitted_by: research.submitted_by,
-        //   submitted_date: research.submitted_date,
-        //   category: categories?.map(item=>item?.research_name),
-        //   endorsements: endorsements?.map(item => ({representative: item.rep_name, status: item.status})),
-        //   research_investigators: research_investigators?.map(item => ({
-        //     id_number: item.id_number,
-        //     name: `${item?.first_name} ${item?.middle_name||''}${item?.middle_name?' ':''}${item?.last_name}`,
-        //     mobile_number: item.mobile_number,
-        //     email: item.email,
-        //     college: item.college,
-        //     dept: item.dept,
-        //   })),
-        // }
-
-        res.status(OK).json({Research: research, Categories: categories});
+        // res.status(OK).json({Research: research, Categories: categories});
+        res.status(OK).json({Research: response});
         return;
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
