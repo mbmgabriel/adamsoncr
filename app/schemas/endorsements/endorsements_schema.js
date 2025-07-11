@@ -9,6 +9,8 @@
  *           type: integer
  *         endorsement_rep_id:
  *           type: integer
+ *         endorsement_rep_name:
+ *           type: string
  *         status:
  *           type: string
  *     EndorsementsResponse:
