@@ -2,7 +2,8 @@ const { Validator } = require("../../core/validator");
 
 const researchDocumentsValidator = (body, res) => {
   const rules = {
-    // id: "required",
+    // research_id: "required",
+    // document_title_id: "required",
   };
   return new Validator(body, rules, res);
 };

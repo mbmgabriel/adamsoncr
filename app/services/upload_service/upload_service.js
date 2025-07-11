@@ -8,10 +8,10 @@ if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR);
 }
 
-const COURSE_COVER_DIR = path.join(UPLOADS_DIR, 'course_cover');
-if (!fs.existsSync(COURSE_COVER_DIR)) {
-  fs.mkdirSync(COURSE_COVER_DIR);
-}
+// const COURSE_COVER_DIR = path.join(UPLOADS_DIR, 'course_cover');
+// if (!fs.existsSync(COURSE_COVER_DIR)) {
+//   fs.mkdirSync(COURSE_COVER_DIR);
+// }
 
 // // Set storage engine for multer
 // const storage = multer.diskStorage({
@@ -65,6 +65,10 @@ const upload_service = multer({
       case 'profile_image':
         configureFileType = /png|jpe?g|gif/;
         // no videos, images
+        break;
+      case 'document_filepath':
+        configureFileType = /pdf/;
+        // pdf
         break;
       case 'assignment_image':
         configureFileType = /png|jpe?g|gif/;
