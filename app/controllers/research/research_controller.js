@@ -39,7 +39,7 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const researches = await Research.findAll({
-          attributes: ['title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date'],
+          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date'],
         });
         res.status(OK).json(researches);
       } catch (error) {
@@ -52,7 +52,7 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const research = await Research.findOne({
-          attributes: ['title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date'],
+          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date'],
           where: {id: req.params.id},
           include: [
             {
