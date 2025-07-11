@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   Endorsements.init({
     research_id: DataTypes.INTEGER,
     endorsement_rep_id: DataTypes.INTEGER,
+    endorsement_rep_name: DataTypes.STRING,
     status: DataTypes.STRING,
     created_by: DataTypes.INTEGER,
     updated_by: DataTypes.INTEGER,
