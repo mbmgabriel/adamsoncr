@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     ethical_considerations: DataTypes.INTEGER,
     submitted_by: DataTypes.STRING,
     submitted_date: DataTypes.DATE,
+    status: DataTypes.STRING,
     created_by: DataTypes.INTEGER,
     updated_by: DataTypes.INTEGER,
     deleted_by: DataTypes.INTEGER,

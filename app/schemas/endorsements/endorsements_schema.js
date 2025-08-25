@@ -13,6 +13,8 @@
  *           type: string
  *         status:
  *           type: string
+ *         remarks:
+ *           type: string
  *     EndorsementsResponse:
  *       allOf:
  *         - $ref: '#/components/schemas/Endorsements'
