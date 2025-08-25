@@ -20,6 +20,7 @@ const EndorsementsController = {
           endorsement_rep_id: req.body.endorsement_rep_id,
           endorsement_rep_name: req.body.endorsement_rep_name,
           status: req.body.status,
+          remarks: req.body.remarks,
           created_at: req.user.id,
           },
           { transaction: t }
@@ -35,7 +36,7 @@ const EndorsementsController = {
     await sequelize.transaction(async (t) => {
       try {
         const endorsementss = await Endorsements.findAll({
-          attributes: ['research_id','endorsement_rep_id','endorsement_rep_name','status'],
+          attributes: ['research_id','endorsement_rep_id','endorsement_rep_name','status','remarks'],
         });
         res.status(OK).json({Endorsements: endorsementss});
       } catch (error) {
@@ -49,7 +50,7 @@ const EndorsementsController = {
     await sequelize.transaction(async (t) => {
       try {
         const endorsementss = await Endorsements.findAll({
-          attributes: ['research_id','endorsement_rep_id','endorsement_rep_name','status'],
+          attributes: ['research_id','endorsement_rep_id','endorsement_rep_name','status','remarks'],
           where: {id: req.params.id},
         });
 
@@ -86,6 +87,7 @@ const EndorsementsController = {
           endorsement_rep_id: req.body.endorsement_rep_id,
           endorsement_rep_name: req.body.endorsement_rep_name,
           status: req.body.status,
+          remarks: req.body.remarks,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
         });

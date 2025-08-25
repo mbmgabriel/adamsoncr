@@ -25,6 +25,7 @@ const ResearchController = {
           ethical_considerations: req.body.ethical_considerations,
           submitted_by: req.body.submitted_by,
           submitted_date: req.body.submitted_date,
+          status: req.body.status,
           created_at: req.user.id,
           },
           { transaction: t }
@@ -39,7 +40,7 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const researches = await Research.findAll({
-          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date'],
+          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date','status'],
         });
         res.status(OK).json(researches);
       } catch (error) {
@@ -52,7 +53,7 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const research = await Research.findOne({
-          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date'],
+          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date','status'],
           where: {id: req.params.id},
           include: [
             {
@@ -162,6 +163,7 @@ const ResearchController = {
           ethical_considerations: req.body.ethical_considerations || researchs.ethical_considerations,
           submitted_by: req.body.submitted_by || researchs.submitted_by,
           submitted_date: req.body.submitted_date || researchs.submitted_date,
+          status: req.body.status || researchs.status,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
         });

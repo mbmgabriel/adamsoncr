@@ -21,6 +21,8 @@
  *           type: string
  *         submitted_date:
  *           type: string
+ *         status
+ *           type: string
  *     ResearchResponse:
  *       allOf:
  *         - $ref: '#/components/schemas/Research'
