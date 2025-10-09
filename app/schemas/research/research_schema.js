@@ -21,7 +21,7 @@
  *           type: string
  *         submitted_date:
  *           type: string
- *         status
+ *         status:
  *           type: string
  *     ResearchResponse:
  *       allOf:

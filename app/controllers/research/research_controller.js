@@ -58,7 +58,7 @@ const ResearchController = {
           include: [
             {
               model: Endorsements,
-              attributes: ['status'],
+              attributes: ['status', 'remarks'],
               include: [
                 {
                   model: EndorsementRepresentative,
@@ -104,6 +104,7 @@ const ResearchController = {
               const rep = e?.EndorsementRepresentative
               return ({
                 status: e?.status,
+                remarks: e?.remarks,
                 rep_name: rep?.rep_name,
               })
             }),
