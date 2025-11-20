@@ -13,24 +13,24 @@ const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = r
 
 
 const UserAccountController = {
-  initialize: async (req, res) => {
-    const newUser = await sequelize.transaction(async (t) => {
-      try {
-        const superAdmin = await UserAccount.create(
-          {
-            username: req.body.username,
-            password: req.body.password,
-            role_id: 1,
-          },
-          { transaction: t }
-        );
+  // initialize: async (req, res) => {
+  //   const newUser = await sequelize.transaction(async (t) => {
+  //     try {
+  //       const superAdmin = await UserAccount.create(
+  //         {
+  //           username: req.body.username,
+  //           password: req.body.password,
+  //           role_id: 1,
+  //         },
+  //         { transaction: t }
+  //       );
 
-        return superAdmin;
-      } catch (error) {
-        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
-      }
-    });
-   },
+  //       return superAdmin;
+  //     } catch (error) {
+  //       res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+  //     }
+  //   });
+  //  },
   login: async (req, res) => {
     try {
       const user = await UserAccount.findOne({
@@ -140,44 +140,6 @@ const UserAccountController = {
           Message: "User Credentials Successfully Created!",
         });
 
-      //   switch (req.body.role_id) {
-      //     case 1:
-      //       res.status(OK).json({ message: "Test" });
-      //       return;
-      //     case 2:
-      //       const admin = await Admin.create(
-      //         {
-      //           first_name: req.body.first_name,
-      //           last_name: req.body.last_name,
-      //           middle_name: req.body.middle_name,
-      //           email: req.body.email,
-      //           contact_number: req.body.contact_number,
-      //           created_by: req.user.id,
-      //           UserAccount: {
-      //             username: req.body.username,
-      //             password: req.body.password,
-      //             role_id: req.body.role_id,
-      //             created_by: req.user.id,
-      //           },
-      //         },
-      //         {
-      //           include: [UserAccount],
-      //         },
-      //         { transaction: t }
-      //       );
-      //       const uadmin = await Admin.findOne({
-      //         where: {
-      //           user_account_id: admin.UserAccount.id,
-      //         },
-      //       })
-
-      //       res.status(OK).json({
-      //         Admin: uadmin,
-      //         Message: "Admin Credentials Successfully Created!",
-      //       });
-      //       return;
-      //   }
-      //   return;
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
         return;
@@ -192,7 +154,7 @@ const UserAccountController = {
           include: [
             {
               model: User,
-              attributes: ['last_name','first_name','middle_name','position','dept','college','contact_number'],
+              attributes: ['last_name','first_name','middle_name','contact_number'],
             },
             {
               model: UserRole,
@@ -215,7 +177,7 @@ const UserAccountController = {
           include: [
             {
               model: User,
-              attributes: ['last_name','first_name','middle_name','position','dept','college', 'contact_number'],
+              attributes: ['last_name','first_name','middle_name', 'contact_number'],
             },
             {
               model: UserRole,
@@ -269,63 +231,15 @@ const UserAccountController = {
           last_name: req.body.last_name,
           first_name: req.body.first_name,
           middle_name: req.body.middle_name,
-          position: req.body.position,
-          dept: req.body.dept,
-          college: req.body.college,
+          // position: req.body.position,
+          // dept: req.body.dept,
+          // college: req.body.college,
           contact_number: req.body.contact_number,
           updated_by: req.user.id,
         });
 
-        
-
+      
         res.status(OK).json({ User: user, Message: 'User Details Successfully Updated!' });
-
-        // switch (user.role_id) {
-        //   case 1:
-        //     return user;
-        //     break;
-        //   case 2:
-   
-        //     const adminUser = await Admin.findOne({
-        //       where: {
-        //         user_account_id: user.id,
-        //       },
-        //     });
-
-        //     await adminUser.update({
-        //       first_name: req.body.first_name,
-        //       last_name: req.body.last_name,
-        //       middle_name: req.body.middle_name,
-        //       email: req.body.email,
-        //       contact_number: req.body.contact_number,
-        //       updated_by: req.user.id,
-        //     });
-
-        //      res.status(OK).json({ Admin: adminUser, Message: 'Admin Credentials Successfully Updated!' });
-        //     return;
-        //   case 3:
-        
-        //     const teacherUser = await Teacher.findOne({
-        //       where: {
-        //         user_account_id: user.id,
-        //       },
-        //     });
-
-        //     await teacherUser.update({
-        //       first_name: req.body.first_name,
-        //       last_name: req.body.last_name,
-        //       middle_name: req.body.middle_name,
-        //       email: req.body.email,
-        //       contact_number: req.body.contact_number,
-        //       updated_by: req.user.id,
-        //     });
-
-
-        //     res.status(OK).json({ Teacher: teacherUser, Message: 'Teacher Credential Successfully Updated!' });
-        //     return;
-        // }
-
-
 
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -354,46 +268,6 @@ const UserAccountController = {
             where: { user_account_id: req.params.id },
           },
         );
-
-
-        // switch (user.role_id) {
-        //   case 1:
-        //     return user;
-        //     break;
-        //   case 2:
-        //     await user.destroy({
-        //       force: false,
-        //       deleted_by: user.id,
-        //     });
-
-        //     const adminUser = await Admin.findOne({
-        //       where: {
-        //         user_account_id: user.id,
-        //       },
-        //     });
-
-        //     await adminUser.destroy({
-        //       force: false,
-        //       deleted_by: req.user.id,
-        //     });
-
-        //   case 3:
-        //     await user.destroy({
-        //       force: false,
-        //       deleted_by: req.user.id,
-        //     });
-
-        //     const teacherUser = await Teacher.findOne({
-        //       where: {
-        //         user_account_id: user.id,
-        //       },
-        //     });
-
-        //     await teacherUser.destroy({
-        //       force: false,
-        //       deleted_by: req.user.id,
-        //     });
-        // }
 
         
         await userAccount.destroy({

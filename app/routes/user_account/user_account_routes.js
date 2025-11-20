@@ -5,7 +5,7 @@ const { UserAccountController } = require('../../controllers/user_account/user_a
 const verify_user_account = require('../../middlewares/auth/verify_user_account')
 const { upload_service } = require('../../services/upload_service/upload_service')
 
-router.post('/initialize', UserAccountController.initialize)
+// router.post('/initialize', UserAccountController.initialize)
 
 /**
  *  @openapi
