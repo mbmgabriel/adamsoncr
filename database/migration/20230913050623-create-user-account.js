@@ -19,6 +19,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      email: {
+        type: Sequelize.STRING
+      },
       profile_image: {
         // allowNull: false,
         type: Sequelize.STRING

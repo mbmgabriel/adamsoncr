@@ -21,15 +21,13 @@ module.exports = {
       middle_name: {
         type: Sequelize.STRING
       },
-      position: {
+      contact_number: {
         type: Sequelize.STRING
       },
-      dept: {
+      dept_id: {
         type: Sequelize.STRING
       },
-      college: {
-        type: Sequelize.STRING
-      },
+
       created_by: {
         type: Sequelize.INTEGER
       },
