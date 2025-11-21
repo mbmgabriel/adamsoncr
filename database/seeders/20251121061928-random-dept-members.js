@@ -1,0 +1,170 @@
+'use strict';
+const bcrypt = require('bcrypt');
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    const hashedPs = await bcrypt.hash('password', 10);
+    await queryInterface.bulkInsert(
+      'user_accounts',
+      [
+        {
+          username: 'sample_rc1',
+          password: hashedPs,
+          role_id: 3,
+          email: "sample3@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_rc2',
+          password: hashedPs,
+          role_id: 3,
+          email: "sample3@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_rc3',
+          password: hashedPs,
+          role_id: 3,
+          email: "sample3@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_rc4',
+          password: hashedPs,
+          role_id: 3,
+          email: "sample3@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_cp1',
+          password: hashedPs,
+          role_id: 4,
+          email: "sample4@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_cp2',
+          password: hashedPs,
+          role_id: 4,
+          email: "sample4@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_cp3',
+          password: hashedPs,
+          role_id: 4,
+          email: "sample4@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_cp4',
+          password: hashedPs,
+          role_id: 4,
+          email: "sample4@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_dean1',
+          password: hashedPs,
+          role_id: 5,
+          email: "sample5@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_dean2',
+          password: hashedPs,
+          role_id: 5,
+          email: "sample5@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_dean3',
+          password: hashedPs,
+          role_id: 5,
+          email: "sample5@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+        {
+          username: 'sample_dean4',
+          password: hashedPs,
+          role_id: 5,
+          email: "sample5@mailinator.com",
+          verified_at: new Date(),
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+        },
+      ],
+      { ignoreDuplicates: true }
+    );
+    await queryInterface.bulkInsert(
+      'users',
+      [
+        { user_account_id: 14, last_name: 'Weston', first_name: 'Daniel', contact_number: '09823983549', dept_id: 2, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 15, last_name: 'Joy', first_name: 'Ramirez', contact_number: '09786331670', dept_id: 2, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 16, last_name: 'David', first_name: 'Vu', contact_number: '09991000807', dept_id: 2, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 17, last_name: 'Kimora', first_name: 'Kelley', contact_number: '09161282682', dept_id: 3, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 18, last_name: 'Eric', first_name: 'Cook', contact_number: '09055879825', dept_id: 3, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 19, last_name: 'Aaliyah', first_name: 'Carson', contact_number: '09005653704', dept_id: 3, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 20, last_name: 'Ares', first_name: 'Sampson', contact_number: '09947088654', dept_id: 3, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 21, last_name: 'Meilani', first_name: 'Wu', contact_number: '09570207959', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 22, last_name: 'Kyson', first_name: 'Fry', contact_number: '09016700449', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 23, last_name: 'Clarissa', first_name: 'Boyer', contact_number: '09578474540', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 24, last_name: 'Zeke', first_name: 'Carr', contact_number: '09996575690', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 25, last_name: 'Adalynn', first_name: 'Russell', contact_number: '09029776152', dept_id: 2, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+      ],
+      { ignoreDuplicates: true }
+    );
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('user_accounts', null, {});
+    await queryInterface.bulkDelete('users', null, {});
+  }
+};

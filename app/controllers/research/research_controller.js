@@ -36,6 +36,35 @@ const ResearchController = {
       }
     });
   },
+  comprehensiveCreate: async (req, res) => {
+    const matched = researchValidator(req.body, res).validate()
+
+    if (!matched){
+      res.status(PRECONDITION_FAILED).json({message: 'Role Name required'});
+    }
+
+    await sequelize.transaction(async (t) => {
+      try {
+        const researchs = await Research.create({
+          title: req.body.title,
+          category: req.body.category,
+          purpose_id: req.body.purpose_id,
+          version_number: req.body.version_number,
+          research_duration: req.body.research_duration,
+          ethical_considerations: req.body.ethical_considerations,
+          submitted_by: req.body.submitted_by,
+          submitted_date: req.body.submitted_date,
+          status: req.body.status,
+          created_at: req.user.id,
+          },
+          { transaction: t }
+        );
+        res.status(CREATED).json({Research: researchs, Message: 'Research entry created.'});
+      } catch (error) {
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+      }
+    });
+  },
   all: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
