@@ -73,6 +73,34 @@ router.post('/register', verify_user_account, UserAccountController.create)
 */
 router.get('/all', verify_user_account, UserAccountController.all)
 /**
+ * @openapi
+ * /api/v1/user/filter:
+ *   get:
+ *     tags:
+ *       - User Account
+ *     description: GET Users With Role and Department API
+ *     summary: Get Users With Role and Department
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserAccountGetInformationResponse'
+ *     parameters:
+ *       - name: role_id
+ *         in: query
+ *         schema:
+ *           type: integer
+ *       - name: dept_id
+ *         in: query
+ *         schema:
+ *           type: integer
+ */
+router.get('/filter', UserAccountController.getWithFilter)
+/**
  *  @openapi
  *  /api/v1/user/{id}:
  *    get:

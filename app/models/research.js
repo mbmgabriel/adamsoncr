@@ -22,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
       models.Research.hasMany(models.Endorsements, {
         foreignKey: "research_id",
       });
+      models.Research.belongsTo(models.User, {
+        foreignKey: "created_by",
+      });
     }
   }
   Research.init({
