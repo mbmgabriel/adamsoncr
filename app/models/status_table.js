@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class status_table extends Model {
+  class StatusTables extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,14 +13,14 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  status_table.init({
+  StatusTables.init({
     status: DataTypes.STRING,
     created_by: DataTypes.INTEGER,
     updated_by: DataTypes.INTEGER,
     deleted_by: DataTypes.INTEGER,
   }, {
     sequelize,
-    modelName: 'status_table',
+    modelName: 'StatusTables',
   });
-  return status_table;
+  return StatusTables;
 };
