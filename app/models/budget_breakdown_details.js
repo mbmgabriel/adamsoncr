@@ -3,19 +3,19 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class BudgetBreakdownDetail extends Model {
+  class BudgetBreakdownDetails extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.BudgetBreakdownDetail.hasMany(models.BudgetBreakdowns, {
+      models.BudgetBreakdownDetails.hasMany(models.BudgetBreakdowns, {
         foreignKey: "fund_id",
       });
     }
   }
-  BudgetBreakdownDetail.init({
+  BudgetBreakdownDetails.init({
     fund_name: DataTypes.STRING,
     fund_desc: DataTypes.STRING,
     created_by: DataTypes.INTEGER,
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     deleted_by: DataTypes.INTEGER,
   }, {
     sequelize,
-    modelName: 'BudgetBreakdownDetail',
+    modelName: 'BudgetBreakdownDetails',
   });
-  return BudgetBreakdownDetail;
+  return BudgetBreakdownDetails;
 };
