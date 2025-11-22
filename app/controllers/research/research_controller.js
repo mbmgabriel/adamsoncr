@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 
 
-const { Research, ResearchDocuments, ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, sequelize } = require("../../models");
+const { Research, ResearchDocuments,Departments,  ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, sequelize } = require("../../models");
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 const { researchValidator } = require("../research/research_validator")
 
@@ -59,6 +59,8 @@ const ResearchController = {
         },
           { transaction: t }
         );
+
+
         res.status(CREATED).json({ Research: researchs, Message: 'Research entry created.' });
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -70,6 +72,16 @@ const ResearchController = {
       try {
         const researches = await Research.findAll({
           attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
+          include: [
+            {
+              model: User,
+              attributes: ['first_name','middle_name','last_name','dept_id'],
+              include: [
+                {model: Departments,attributes: ['dept_name']}
+              ]
+            },  
+          ]
+          
         });
         res.status(OK).json(researches);
       } catch (error) {
@@ -85,6 +97,13 @@ const ResearchController = {
           attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
           where: { id: req.params.id },
           include: [
+            {
+              model: User,
+              attributes: ['first_name','middle_name','last_name','dept_id'],
+              include: [
+                {model: Departments,attributes: ['dept_name']}
+              ]
+            },
             {
               model: Endorsements,
               attributes: ['status', 'remarks'],
@@ -224,6 +243,9 @@ const ResearchController = {
           include: {
             model: User,
             attributes: ['user_account_id','last_name','first_name','middle_name','dept_id'],
+            include: [
+              {model: Departments, attributes:['dept_name']}
+            ],
             where: {dept_id: dept_id}
           }
         });
