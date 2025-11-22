@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 
 
-const { UserAccount, User, UserRole, sequelize } = require("../../models/");
+const { UserAccount, User, UserRole, Departments, sequelize } = require("../../models/");
 const bcrypt = require('bcrypt')
 
 const fs = require('fs');
@@ -155,11 +155,20 @@ const UserAccountController = {
             {
               model: User,
               attributes: ['last_name','first_name','middle_name','contact_number'],
+              include: [
+                {
+                  model: Departments,
+                  attributes: ['id','dept_name']
+                }
+              ]
             },
             {
               model: UserRole,
-              attributes: ['role_name', 'role_desc']
+              attributes: ['id','role_name', 'role_desc']
             },
+            {
+              model: Depart
+            }
           ]
         });
         res.json(userAccounts);
@@ -178,6 +187,51 @@ const UserAccountController = {
             {
               model: User,
               attributes: ['last_name','first_name','middle_name', 'contact_number'],
+              include: [
+                {
+                  model: Departments,
+                  attributes: ['id','dept_name']
+                }
+              ]
+            },
+            {
+              model: UserRole,
+              attributes: ['id','role_name', 'role_desc']
+            },
+          ],
+        });
+
+        if (!userAccounts) {
+          res.status(NOT_FOUND).json({
+            message: `No matching record with ${req.params.id}`,
+          });
+          return;
+        }
+
+        res.status(OK).json(userAccounts);
+        return;
+      } catch (error) {
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+        return;
+      }
+    });
+  },
+  getWithFilter: async (req, res) => {
+
+    const {dept_id, role_id} = req.query;
+    
+
+    await sequelize.transaction(async (t) => {
+      try {
+        const userAccounts = await UserAccount.findAll({
+          attributes: ['id', 'username', 'role_id', 'email', 'profile_image', 'created_by', 'created_at'],
+          where: role_id ? {role_id: role_id} : undefined,
+          include: [
+            {
+              model: User,
+              attributes: ['last_name','first_name','middle_name', 'contact_number','dept_id'],
+              include: [{model: Departments, attributes: ['dept_name']}],
+              where: dept_id ? {dept_id: dept_id} : undefined,
             },
             {
               model: UserRole,

@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       dept_id: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
 
       created_by: {

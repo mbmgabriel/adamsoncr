@@ -4,6 +4,7 @@ const router = express.Router()
 const { ResearchController } = require('../../controllers/research/research_controller')
 const verify_user_account = require('../../middlewares/auth/verify_user_account')
 
+
 /**
  * @openapi
  * /api/v1/research/create:
@@ -27,31 +28,6 @@ const verify_user_account = require('../../middlewares/auth/verify_user_account'
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Research'
- */
-router.post('/create', verify_user_account, ResearchController.create)
-/**
- * @openapi
- * /api/v1/research/complete/create:
- *   post:
- *     tags:
- *       - Research
- *     description: CREATE Research API
- *     summary: Create New Research
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Ok
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ResearchsResponse'
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/ResearchComplete'
  */
 router.post('/create', verify_user_account, ResearchController.create)
 /**
@@ -96,6 +72,32 @@ router.get('/all', verify_user_account, ResearchController.all)
 router.get('/details/all', verify_user_account, ResearchController.getAllStatic)
 /**
  *  @openapi
+ *  /api/v1/research/department/{dept_id}:
+ *    get:
+ *      tags: 
+ *        - Research
+ *      description: GET Specific Research by Id API.
+ *      summary: Get Specific Research
+ *      security: 
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: dept_id
+ *          schema:
+ *           type: integer
+ *          required: true
+ *      responses:
+ *        200:
+ *          description: Ok
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ResearchResponse'
+ *      
+*/
+router.get('/department/:dept_id', verify_user_account, ResearchController.getByDepartment)
+/**
+ *  @openapi
  *  /api/v1/research/{id}:
  *    get:
  *      tags: 
@@ -120,6 +122,7 @@ router.get('/details/all', verify_user_account, ResearchController.getAllStatic)
  *      
 */
 router.get('/:id', verify_user_account, ResearchController.get)
+
 /**
  * @openapi
  * /api/v1/research/status/{id}/{status_id}:
@@ -148,13 +151,10 @@ router.get('/:id', verify_user_account, ResearchController.get)
  *         schema:
  *           type: integer
  *         required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Research'
  * 
  */
 router.put('/status/:id/:status_id', verify_user_account, ResearchController.updateStatus)
+
 /**
  * @openapi
  * /api/v1/research/{id}:

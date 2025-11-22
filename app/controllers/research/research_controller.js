@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 
 
-const { Research, ResearchDocuments, ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, sequelize } = require("../../models");
+const { Research, ResearchDocuments, ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, sequelize } = require("../../models");
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 const { researchValidator } = require("../research/research_validator")
 
@@ -10,8 +10,8 @@ const ResearchController = {
   create: async (req, res) => {
     const matched = researchValidator(req.body, res).validate()
 
-    if (!matched){
-      res.status(PRECONDITION_FAILED).json({message: 'Role Name required'});
+    if (!matched) {
+      res.status(PRECONDITION_FAILED).json({ message: 'Role Name required' });
     }
 
     await sequelize.transaction(async (t) => {
@@ -26,11 +26,11 @@ const ResearchController = {
           submitted_by: req.body.submitted_by,
           submitted_date: req.body.submitted_date,
           status_id: req.body.status_id,
-          created_at: req.user.id,
-          },
+          created_by: req.user.id,
+        },
           { transaction: t }
         );
-        res.status(CREATED).json({Research: researchs, Message: 'Research entry created.'});
+        res.status(CREATED).json({ Research: researchs, Message: 'Research entry created.' });
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
@@ -39,8 +39,8 @@ const ResearchController = {
   comprehensiveCreate: async (req, res) => {
     const matched = researchValidator(req.body, res).validate()
 
-    if (!matched){
-      res.status(PRECONDITION_FAILED).json({message: 'Role Name required'});
+    if (!matched) {
+      res.status(PRECONDITION_FAILED).json({ message: 'Role Name required' });
     }
 
     await sequelize.transaction(async (t) => {
@@ -56,10 +56,10 @@ const ResearchController = {
           submitted_date: req.body.submitted_date,
           status_id: req.body.status_id,
           created_at: req.user.id,
-          },
+        },
           { transaction: t }
         );
-        res.status(CREATED).json({Research: researchs, Message: 'Research entry created.'});
+        res.status(CREATED).json({ Research: researchs, Message: 'Research entry created.' });
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
@@ -69,7 +69,7 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const researches = await Research.findAll({
-          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date','status_id'],
+          attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
         });
         res.status(OK).json(researches);
       } catch (error) {
@@ -82,8 +82,8 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const research = await Research.findOne({
-          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date','status_id'],
-          where: {id: req.params.id},
+          attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
+          where: { id: req.params.id },
           include: [
             {
               model: Endorsements,
@@ -97,11 +97,11 @@ const ResearchController = {
             },
             {
               model: ResearchInvestigators,
-              attributes: ['id_number','first_name','middle_name','last_name','mobile_number','email','college','dept'],
+              attributes: ['id_number', 'first_name', 'middle_name', 'last_name', 'mobile_number', 'email', 'college', 'dept'],
             },
             {
               model: ResearchDocuments,
-              attributes: ['document_title_id','document_filepath'],
+              attributes: ['document_title_id', 'document_filepath'],
               include: [
                 {
                   model: DocumentTypes,
@@ -112,11 +112,11 @@ const ResearchController = {
           ]
         });
 
-        const category_ids = research?.category?.split(",")?.map(item=>parseInt(item))
+        const category_ids = research?.category?.split(",")?.map(item => parseInt(item))
 
         const categories = await ResearchCategory.findAll({
-          attributes: ['id','research_name'],
-          where: {id: category_ids}
+          attributes: ['id', 'research_name'],
+          where: { id: category_ids }
         })
 
 
@@ -129,17 +129,17 @@ const ResearchController = {
           ethical_considerations: research?.ethical_considerations,
           submitted_by: research?.submitted_by,
           submitted_date: research?.submitted_date,
-          endorsements: research?.Endorsements?.map(e=> {
-              const rep = e?.EndorsementRepresentative
-              return ({
-                status_id: e?.status_id,
-                remarks: e?.remarks,
-                rep_name: rep?.rep_name,
-              })
-            }),
+          endorsements: research?.Endorsements?.map(e => {
+            const rep = e?.EndorsementRepresentative
+            return ({
+              status_id: e?.status_id,
+              remarks: e?.remarks,
+              rep_name: rep?.rep_name,
+            })
+          }),
           research_investigators: research?.ResearchInvestigators?.map(item => ({
             id_number: item.id_number,
-            name: `${item?.first_name} ${item?.middle_name||''}${item?.middle_name?' ':''}${item?.last_name}`,
+            name: `${item?.first_name} ${item?.middle_name || ''}${item?.middle_name ? ' ' : ''}${item?.last_name}`,
             mobile_number: item.mobile_number,
             email: item.email,
             college: item.college,
@@ -156,7 +156,7 @@ const ResearchController = {
         }
 
         // res.status(OK).json({Research: research, Categories: categories});
-        res.status(OK).json({Research: response});
+        res.status(OK).json({ Research: response });
         return;
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -168,22 +168,22 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const documentTypess = await DocumentTypes.findAll({
-          attributes: ['id','document_name'],
+          attributes: ['id', 'document_name'],
         });
         const budgetBreakdownDetailss = await BudgetBreakdownDetails.findAll({
-          attributes: ['id','fund_name','fund_desc'],
+          attributes: ['id', 'fund_name', 'fund_desc'],
         });
         const endorsementRepresentatives = await EndorsementRepresentative.findAll({
-          attributes: ['id','rep_name'],
+          attributes: ['id', 'rep_name'],
         });
         const researchCategorys = await ResearchCategory.findAll({
-          attributes: ['id','research_name'],
+          attributes: ['id', 'research_name'],
         });
         const researchPurposes = await ResearchPurpose.findAll({
-          attributes: ['id','purpose_name'],
+          attributes: ['id', 'purpose_name'],
         });
         const statusTabless = await StatusTables.findAll({
-          attributes: ['id','status'],
+          attributes: ['id', 'status'],
         });
         // const userAccounts = await UserAccount.findAll({
         //   attributes: ['id', 'username', 'role_id', 'email', 'profile_image', 'created_by', 'created_at'],
@@ -206,12 +206,30 @@ const ResearchController = {
           ResearchPurpose: researchPurposes,
           StatusTables: statusTabless,
         }
-        
-        res.status(OK).json({Details: response});
+
+        res.status(OK).json({ Details: response });
         return;
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
         return;
+      }
+    });
+  },
+  getByDepartment: async (req, res) => {
+    await sequelize.transaction(async (t) => {
+      try {
+        const dept_id=req.params.dept_id;
+        const researches = await Research.findAll({
+          attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
+          include: {
+            model: User,
+            attributes: ['user_account_id','last_name','first_name','middle_name','dept_id'],
+            where: {dept_id: dept_id}
+          }
+        });
+        res.status(OK).json(researches);
+      } catch (error) {
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
     });
   },
