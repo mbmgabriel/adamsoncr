@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 
 
-const { Research, ResearchDocuments, ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes,  sequelize } = require("../../models");
+const { Research, ResearchDocuments, ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, sequelize } = require("../../models");
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 const { researchValidator } = require("../research/research_validator")
 
@@ -25,7 +25,7 @@ const ResearchController = {
           ethical_considerations: req.body.ethical_considerations,
           submitted_by: req.body.submitted_by,
           submitted_date: req.body.submitted_date,
-          status: req.body.status,
+          status_id: req.body.status_id,
           created_at: req.user.id,
           },
           { transaction: t }
@@ -54,7 +54,7 @@ const ResearchController = {
           ethical_considerations: req.body.ethical_considerations,
           submitted_by: req.body.submitted_by,
           submitted_date: req.body.submitted_date,
-          status: req.body.status,
+          status_id: req.body.status_id,
           created_at: req.user.id,
           },
           { transaction: t }
@@ -69,7 +69,7 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const researches = await Research.findAll({
-          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date','status'],
+          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date','status_id'],
         });
         res.status(OK).json(researches);
       } catch (error) {
@@ -82,7 +82,7 @@ const ResearchController = {
     await sequelize.transaction(async (t) => {
       try {
         const research = await Research.findOne({
-          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date','status'],
+          attributes: ['id','title','category','purpose_id','version_number','research_duration','ethical_considerations','submitted_by','submitted_date','status_id'],
           where: {id: req.params.id},
           include: [
             {
@@ -132,7 +132,7 @@ const ResearchController = {
           endorsements: research?.Endorsements?.map(e=> {
               const rep = e?.EndorsementRepresentative
               return ({
-                status: e?.status,
+                status_id: e?.status_id,
                 remarks: e?.remarks,
                 rep_name: rep?.rep_name,
               })
@@ -164,6 +164,57 @@ const ResearchController = {
       }
     });
   },
+  getAllStatic: async (req, res) => {
+    await sequelize.transaction(async (t) => {
+      try {
+        const documentTypess = await DocumentTypes.findAll({
+          attributes: ['id','document_name'],
+        });
+        const budgetBreakdownDetailss = await BudgetBreakdownDetails.findAll({
+          attributes: ['id','fund_name','fund_desc'],
+        });
+        const endorsementRepresentatives = await EndorsementRepresentative.findAll({
+          attributes: ['id','rep_name'],
+        });
+        const researchCategorys = await ResearchCategory.findAll({
+          attributes: ['id','research_name'],
+        });
+        const researchPurposes = await ResearchPurpose.findAll({
+          attributes: ['id','purpose_name'],
+        });
+        const statusTabless = await StatusTables.findAll({
+          attributes: ['id','status'],
+        });
+        // const userAccounts = await UserAccount.findAll({
+        //   attributes: ['id', 'username', 'role_id', 'email', 'profile_image', 'created_by', 'created_at'],
+        //   include: [
+        //     {
+        //       model: User,
+        //       attributes: ['last_name','first_name','middle_name','contact_number'],
+        //     },
+        //     {
+        //       model: UserRole,
+        //       attributes: ['role_name', 'role_desc']
+        //     },
+        //   ]
+        // });
+        const response = {
+          DocumentTypes: documentTypess,
+          BudgetBreakdownDetails: budgetBreakdownDetailss,
+          EndorsementRepresentative: endorsementRepresentatives,
+          ResearchCategory: researchCategorys,
+          ResearchPurpose: researchPurposes,
+          StatusTables: statusTabless,
+        }
+        
+        res.status(OK).json({Details: response});
+        return;
+      } catch (error) {
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+        return;
+      }
+    });
+  },
 
   update: async (req, res) => {
     await sequelize.transaction(async (t) => {
@@ -179,7 +230,7 @@ const ResearchController = {
 
         if (!researchs) {
           res.status(NOT_FOUND).json({
-            Message: `No matching User Role with id ${req.params.id}`,
+            Message: `No matching Research with id ${req.params.id}`,
           });
           return;
         }
@@ -193,7 +244,43 @@ const ResearchController = {
           ethical_considerations: req.body.ethical_considerations || researchs.ethical_considerations,
           submitted_by: req.body.submitted_by || researchs.submitted_by,
           submitted_date: req.body.submitted_date || researchs.submitted_date,
-          status: req.body.status || researchs.status,
+          status_id: req.body.status_id || researchs.status_id,
+          updated_by: req.user.id,
+          updated_at: new Date(Date.now()).toISOString(),
+        });
+
+        res.status(OK).json({
+          Research: researchs,
+          Message: "Research entry updated.",
+        });
+        return;
+      } catch (error) {
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+        return;
+      }
+    });
+  },
+  updateStatus: async (req, res) => {
+    await sequelize.transaction(async (t) => {
+      try {
+
+        const researchs = await Research.findOne(
+          {
+            where: {
+              id: req.params.id,
+            },
+          },
+        );
+
+        if (!researchs) {
+          res.status(NOT_FOUND).json({
+            Message: `No matching Research with id ${req.params.id}`,
+          });
+          return;
+        }
+
+        await researchs.update({
+          status_id: req.params.status_id,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
         });

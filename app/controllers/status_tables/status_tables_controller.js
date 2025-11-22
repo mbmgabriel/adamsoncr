@@ -1,28 +1,27 @@
 const { Op } = require("sequelize");
 
-const { BudgetBreakdownDetails, sequelize } = require("../../models");
-const { budgetBreakdownDetailsValidator } = require("../budget_breakdown_details/budget_breakdown_details_validator")
+const { StatusTables, sequelize } = require("../../models");
+const { statusTablesValidator } = require("../status_tables/status_tables_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 
 
-const BudgetBreakdownDetailsController = {
+const StatusTablesController = {
   create: async (req, res) => {
-    const matched = budgetBreakdownDetailsValidator(req.body, res).validate()
+    const matched = statusTablesValidator(req.body, res).validate()
 
     if (!matched){
-      res.status(PRECONDITION_FAILED).json({message: 'BudgetBreakdownDetails required'});
+      res.status(PRECONDITION_FAILED).json({message: 'StatusTables required'});
     }
 
     await sequelize.transaction(async (t) => {
       try {
-        const budgetBreakdownDetailss = await BudgetBreakdownDetails.create({
-          fund_name: req.body.fund_name,
-          fund_desc: req.body.fund_desc,
+        const statusTabless = await StatusTables.create({
+          status: req.body.status,
           created_at: req.user.id,
           },
           { transaction: t }
         );
-        res.status(CREATED).json({BudgetBreakdownDetails: budgetBreakdownDetailss, Message: 'BudgetBreakdownDetails entry created.'});
+        res.status(CREATED).json({StatusTables: statusTabless, Message: 'StatusTables entry created.'});
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
@@ -32,10 +31,10 @@ const BudgetBreakdownDetailsController = {
   all: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
-        const budgetBreakdownDetailss = await BudgetBreakdownDetails.findAll({
-          attributes: ['id','fund_name','fund_desc'],
+        const statusTabless = await StatusTables.findAll({
+          attributes: ['id','status'],
         });
-        res.status(OK).json({BudgetBreakdownDetails: budgetBreakdownDetailss});
+        res.status(OK).json({StatusTables: statusTabless});
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
@@ -46,12 +45,12 @@ const BudgetBreakdownDetailsController = {
   get: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
-        const budgetBreakdownDetailss = await BudgetBreakdownDetails.findAll({
-          attributes: ['id','fund_name','fund_desc'],
+        const statusTabless = await StatusTables.findAll({
+          attributes: ['id','status'],
           where: {id: req.params.id},
         });
 
-        res.status(OK).json({BudgetBreakdownDetails: budgetBreakdownDetailss});
+        res.status(OK).json({StatusTables: statusTabless});
         return;
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -64,7 +63,7 @@ const BudgetBreakdownDetailsController = {
     await sequelize.transaction(async (t) => {
       try {
 
-        const budgetBreakdownDetailss = await BudgetBreakdownDetails.findOne(
+        const statusTabless = await StatusTables.findOne(
           {
             where: {
               id: req.params.id,
@@ -72,23 +71,22 @@ const BudgetBreakdownDetailsController = {
           },
         );
 
-        if (!budgetBreakdownDetailss) {
+        if (!statusTabless) {
           res.status(NOT_FOUND).json({
-            Message: `No matching BudgetBreakdownDetails entry with id ${req.params.id}`,
+            Message: `No matching StatusTables entry with id ${req.params.id}`,
           });
           return;
         }
 
-        await budgetBreakdownDetailss.update({
-          fund_name: req.body.fund_name,
-          fund_desc: req.body.fund_desc,
+        await statusTabless.update({
+          status: req.body.status,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
         });
 
         res.status(OK).json({
-          BudgetBreakdownDetails: budgetBreakdownDetailss,
-          Message: "BudgetBreakdownDetails entry updated.",
+          StatusTables: statusTabless,
+          Message: "StatusTables entry updated.",
         });
         return;
       } catch (error) {
@@ -101,7 +99,7 @@ const BudgetBreakdownDetailsController = {
   delete: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
-        const budgetBreakdownDetailss = await BudgetBreakdownDetails.findOne(
+        const statusTabless = await StatusTables.findOne(
           {
             where: {
               id: req.params.id,
@@ -109,20 +107,20 @@ const BudgetBreakdownDetailsController = {
           },
         );
 
-        if (!budgetBreakdownDetailss) {
+        if (!statusTabless) {
           res.status(NOT_FOUND).json({
-            Message: `No matching BudgetBreakdownDetails entry with id : ${req.params.id}`,
+            Message: `No matching StatusTables entry with id : ${req.params.id}`,
           });
 
           return;
         }
-        await budgetBreakdownDetailss.destroy({
+        await statusTabless.destroy({
           force: false,
           deleted_by: req.user.id,
         });
 
         res.status(OK).json({
-          Message: `BudgetBreakdownDetails entry Removed.`,
+          Message: `StatusTables entry Removed.`,
         });
         return;
       } catch (error) {
@@ -135,4 +133,4 @@ const BudgetBreakdownDetailsController = {
 
 };
 
-module.exports.BudgetBreakdownDetailsController = BudgetBreakdownDetailsController;
+module.exports.StatusTablesController = StatusTablesController;

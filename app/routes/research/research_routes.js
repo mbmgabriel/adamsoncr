@@ -73,6 +73,27 @@ router.post('/create', verify_user_account, ResearchController.create)
  *                $ref: '#/components/schemas/ResearchsResponse'
 */
 router.get('/all', verify_user_account, ResearchController.all)
+
+/**
+ *  @openapi
+ *  /api/v1/research/details/all:
+ *    get:
+ *      tags: 
+ *        - Research
+ *      description: GET Specific Research by Id API.
+ *      summary: Get Specific Research
+ *      security: 
+ *        - bearerAuth: []
+ *      responses:
+ *        200:
+ *          description: Ok
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ResearchResponse'
+ *      
+*/
+router.get('/details/all', verify_user_account, ResearchController.getAllStatic)
 /**
  *  @openapi
  *  /api/v1/research/{id}:
@@ -98,9 +119,42 @@ router.get('/all', verify_user_account, ResearchController.all)
  *                $ref: '#/components/schemas/ResearchResponse'
  *      
 */
-
-
 router.get('/:id', verify_user_account, ResearchController.get)
+/**
+ * @openapi
+ * /api/v1/research/status/{id}/{status_id}:
+ *   put:
+ *     tags:
+ *       - Research
+ *     description: UPDATE Research by Id API
+ *     summary: Update Specific Research
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ResearchResponse'
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *       - in: path
+ *         name: status_id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Research'
+ * 
+ */
+router.put('/status/:id/:status_id', verify_user_account, ResearchController.updateStatus)
 /**
  * @openapi
  * /api/v1/research/{id}:
