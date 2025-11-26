@@ -167,9 +167,6 @@ const UserAccountController = {
               model: UserRole,
               attributes: ['id','role_name', 'role_desc']
             },
-            {
-              model: Depart
-            }
           ]
         });
         res.json(userAccounts);
