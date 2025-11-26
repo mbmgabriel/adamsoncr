@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.EndorsementRepresentative.hasMany(models.Endorsements, {
-        foreignKey: "endorsement_rep_id",
-      });
+      // models.EndorsementRepresentative.hasMany(models.Endorsements, {
+      //   foreignKey: "endorsement_rep_id",
+      // });
     }
   }
   EndorsementRepresentative.init({

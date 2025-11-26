@@ -24,7 +24,7 @@ module.exports = {
         },
         {
           role_name: 'Research Coordinator',
-          role_desc: 'Research Coordinator',
+          role_desc: 'College Research Coordinator',
           created_at: new Date(),
           created_by: 1,
           updated_at: new Date(),
@@ -32,7 +32,7 @@ module.exports = {
         },
         {
           role_name: 'Chairperson',
-          role_desc: 'Chairperson',
+          role_desc: 'Department Chairperson',
           created_at: new Date(),
           created_by: 1,
           updated_at: new Date(),
@@ -40,7 +40,7 @@ module.exports = {
         },
         {
           role_name: 'Dean',
-          role_desc: 'Dean',
+          role_desc: 'College Dean',
           created_at: new Date(),
           created_by: 1,
           updated_at: new Date(),

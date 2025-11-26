@@ -22,7 +22,7 @@ module.exports = {
         {
           username: 'sample_rc2',
           password: hashedPs,
-          role_id: 3,
+          role_id: 4,
           email: "sample3@mailinator.com",
           verified_at: new Date(),
           created_at: new Date(),
@@ -33,7 +33,7 @@ module.exports = {
         {
           username: 'sample_rc3',
           password: hashedPs,
-          role_id: 3,
+          role_id: 5,
           email: "sample3@mailinator.com",
           verified_at: new Date(),
           created_at: new Date(),
@@ -66,7 +66,7 @@ module.exports = {
         {
           username: 'sample_cp2',
           password: hashedPs,
-          role_id: 4,
+          role_id: 5,
           email: "sample4@mailinator.com",
           verified_at: new Date(),
           created_at: new Date(),
@@ -77,7 +77,7 @@ module.exports = {
         {
           username: 'sample_cp3',
           password: hashedPs,
-          role_id: 4,
+          role_id: 3,
           email: "sample4@mailinator.com",
           verified_at: new Date(),
           created_at: new Date(),
@@ -110,7 +110,7 @@ module.exports = {
         {
           username: 'sample_dean2',
           password: hashedPs,
-          role_id: 5,
+          role_id: 3,
           email: "sample5@mailinator.com",
           verified_at: new Date(),
           created_at: new Date(),
@@ -121,7 +121,7 @@ module.exports = {
         {
           username: 'sample_dean3',
           password: hashedPs,
-          role_id: 5,
+          role_id: 4,
           email: "sample5@mailinator.com",
           verified_at: new Date(),
           created_at: new Date(),
@@ -152,12 +152,12 @@ module.exports = {
         { user_account_id: 17, last_name: 'Kimora', first_name: 'Kelley', contact_number: '09161282682', dept_id: 3, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
         { user_account_id: 18, last_name: 'Eric', first_name: 'Cook', contact_number: '09055879825', dept_id: 3, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
         { user_account_id: 19, last_name: 'Aaliyah', first_name: 'Carson', contact_number: '09005653704', dept_id: 3, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
-        { user_account_id: 20, last_name: 'Ares', first_name: 'Sampson', contact_number: '09947088654', dept_id: 3, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 20, last_name: 'Ares', first_name: 'Sampson', contact_number: '09947088654', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
         { user_account_id: 21, last_name: 'Meilani', first_name: 'Wu', contact_number: '09570207959', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
         { user_account_id: 22, last_name: 'Kyson', first_name: 'Fry', contact_number: '09016700449', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
-        { user_account_id: 23, last_name: 'Clarissa', first_name: 'Boyer', contact_number: '09578474540', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
-        { user_account_id: 24, last_name: 'Zeke', first_name: 'Carr', contact_number: '09996575690', dept_id: 4, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
-        { user_account_id: 25, last_name: 'Adalynn', first_name: 'Russell', contact_number: '09029776152', dept_id: 2, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 23, last_name: 'Clarissa', first_name: 'Boyer', contact_number: '09578474540', dept_id: 5, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 24, last_name: 'Zeke', first_name: 'Carr', contact_number: '09996575690', dept_id: 5, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
+        { user_account_id: 25, last_name: 'Adalynn', first_name: 'Russell', contact_number: '09029776152', dept_id: 5, created_at: new Date(), created_by: 1, updated_at: new Date(), updated_by: 1 },
       ],
       { ignoreDuplicates: true }
     );

@@ -50,6 +50,32 @@ router.post('/create', verify_user_account, EndorsementsController.create)
 router.get('/all', verify_user_account, EndorsementsController.all)
 /**
  *  @openapi
+ *  /api/v1/endorsements/research/{research_id}:
+ *    get:
+ *      tags: 
+ *        - Endorsements
+ *      description: GET Specific Endorsements by Research Id API.
+ *      summary: Get Specific Endorsements by Research ID
+ *      security: 
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: research_id
+ *          schema:
+ *           type: integer
+ *          required: true
+ *      responses:
+ *        200:
+ *          description: Ok
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/EndorsementsResponse'
+ *      
+*/
+router.get('/research/:research_id', verify_user_account, EndorsementsController.getByResearchId)
+/**
+ *  @openapi
  *  /api/v1/endorsements/{id}:
  *    get:
  *      tags: 

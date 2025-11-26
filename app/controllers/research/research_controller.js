@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 
 
-const { Research, ResearchDocuments,Departments,  ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, sequelize } = require("../../models");
+const { Research, ResearchDocuments,Departments,  ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, UserAccount, UserRole, sequelize } = require("../../models");
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 const { researchValidator } = require("../research/research_validator")
 
@@ -23,7 +23,7 @@ const ResearchController = {
           version_number: req.body.version_number,
           research_duration: req.body.research_duration,
           ethical_considerations: req.body.ethical_considerations,
-          submitted_by: req.body.submitted_by,
+          // submitted_by: req.body.submitted_by,
           submitted_date: req.body.submitted_date,
           status_id: req.body.status_id,
           created_by: req.user.id,
@@ -186,15 +186,20 @@ const ResearchController = {
   getAllStatic: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
+        const department = await User.findOne({
+          attributes: ['dept_id'],
+          where: {id: req.user.id},
+        })
+
         const documentTypess = await DocumentTypes.findAll({
           attributes: ['id', 'document_name'],
         });
         const budgetBreakdownDetailss = await BudgetBreakdownDetails.findAll({
           attributes: ['id', 'fund_name', 'fund_desc'],
         });
-        const endorsementRepresentatives = await EndorsementRepresentative.findAll({
-          attributes: ['id', 'rep_name'],
-        });
+        // const endorsementRepresentatives = await EndorsementRepresentative.findAll({
+        //   attributes: ['id', 'rep_name'],
+        // });
         const researchCategorys = await ResearchCategory.findAll({
           attributes: ['id', 'research_name'],
         });
@@ -204,6 +209,19 @@ const ResearchController = {
         const statusTabless = await StatusTables.findAll({
           attributes: ['id', 'status'],
         });
+
+
+        const approvingBodies = await User.findAll({
+          attributes: ['id', 'first_name', 'last_name'],
+          where: {dept_id: department.dept_id},
+          include: [
+            {
+              model: UserAccount, attributes: ['role_id'], where: {role_id: [3,4,5]},
+              include: [{model: UserRole, attributes: ['role_desc']},]
+            }, 
+          ]
+        })
+
         // const userAccounts = await UserAccount.findAll({
         //   attributes: ['id', 'username', 'role_id', 'email', 'profile_image', 'created_by', 'created_at'],
         //   include: [
@@ -220,10 +238,11 @@ const ResearchController = {
         const response = {
           DocumentTypes: documentTypess,
           BudgetBreakdownDetails: budgetBreakdownDetailss,
-          EndorsementRepresentative: endorsementRepresentatives,
+          // EndorsementRepresentative: endorsementRepresentatives,
           ResearchCategory: researchCategorys,
           ResearchPurpose: researchPurposes,
           StatusTables: statusTabless,
+          EndorsementRepresentative: approvingBodies,
         }
 
         res.status(OK).json({ Details: response });

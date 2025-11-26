@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 
-const { Endorsements, sequelize } = require("../../models");
+const { Endorsements, User, UserAccount, UserRole, sequelize } = require("../../models");
 const { endorsementsValidator } = require("../endorsements/endorsements_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 
@@ -9,8 +9,8 @@ const EndorsementsController = {
   create: async (req, res) => {
     const matched = endorsementsValidator(req.body, res).validate()
 
-    if (!matched){
-      res.status(PRECONDITION_FAILED).json({message: 'Endorsements required'});
+    if (!matched) {
+      res.status(PRECONDITION_FAILED).json({ message: 'Endorsements required' });
     }
 
     await sequelize.transaction(async (t) => {
@@ -18,14 +18,16 @@ const EndorsementsController = {
         const endorsementss = await Endorsements.create({
           research_id: req.body.research_id,
           endorsement_rep_id: req.body.endorsement_rep_id,
-          endorsement_rep_name: req.body.endorsement_rep_name,
+          // endorsement_rep_name: req.body.endorsement_rep_name,
+          // status: req.body.status,
+          status_id: req.body.status_id,
           status: req.body.status,
           remarks: req.body.remarks,
           created_at: req.user.id,
-          },
+        },
           { transaction: t }
         );
-        res.status(CREATED).json({Endorsements: endorsementss, Message: 'Endorsements entry created.'});
+        res.status(CREATED).json({ Endorsements: endorsementss, Message: 'Endorsements entry created.' });
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
@@ -36,25 +38,92 @@ const EndorsementsController = {
     await sequelize.transaction(async (t) => {
       try {
         const endorsementss = await Endorsements.findAll({
-          attributes: ['research_id','endorsement_rep_id','endorsement_rep_name','status','remarks'],
+          attributes: ['research_id', 'endorsement_rep_id',
+            // 'endorsement_rep_name',
+            // 'status',
+            'status_id',
+            'remarks'],
+          include: [
+            {
+              model: User,
+              attributes: ['first_name', 'middle_name', 'last_name', 'dept_id'],
+              include: [
+                {
+                  model: UserAccount,
+                  attributes: ['role_id'],
+                  include: { model: UserRole, attributes: ['role_desc'] }
+                }
+              ]
+            },
+          ]
         });
-        res.status(OK).json({Endorsements: endorsementss});
+        res.status(OK).json({ Endorsements: endorsementss });
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
       }
     });
   },
 
+  getByResearchId: async (req, res) => {
+    await sequelize.transaction(async (t) => {
+      try {
+        const endorsementss = await Endorsements.findAll({
+          attributes: ['research_id', 'endorsement_rep_id',
+            // 'endorsement_rep_name',
+            // 'status',
+            'status_id',
+            'remarks'],
+          include: [
+            {
+              model: User,
+              attributes: ['first_name', 'middle_name', 'last_name', 'dept_id'],
+              include: [
+                {
+                  model: UserAccount,
+                  attributes: ['role_id'],
+                  include: { model: UserRole, attributes: ['role_desc'] }
+                }
+              ]
+            },
+          ],
+          where: { research_id: req.params.research_id },
+        });
+
+        res.status(OK).json({ Endorsements: endorsementss });
+        return;
+      } catch (error) {
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+        return;
+      }
+    });
+  },
   // where: {id: req.params.id},
   get: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
         const endorsementss = await Endorsements.findAll({
-          attributes: ['research_id','endorsement_rep_id','endorsement_rep_name','status','remarks'],
-          where: {id: req.params.id},
+          attributes: ['research_id', 'endorsement_rep_id',
+            // 'endorsement_rep_name',
+            // 'status',
+            'status_id',
+            'remarks'],
+          include: [
+            {
+              model: User,
+              attributes: ['first_name', 'middle_name', 'last_name', 'dept_id'],
+              include: [
+                {
+                  model: UserAccount,
+                  attributes: ['role_id'],
+                  include: { model: UserRole, attributes: ['role_desc'] }
+                }
+              ]
+            },
+          ],
+          where: { id: req.params.id },
         });
 
-        res.status(OK).json({Endorsements: endorsementss});
+        res.status(OK).json({ Endorsements: endorsementss });
         return;
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -85,8 +154,9 @@ const EndorsementsController = {
         await endorsementss.update({
           research_id: req.body.research_id,
           endorsement_rep_id: req.body.endorsement_rep_id,
-          endorsement_rep_name: req.body.endorsement_rep_name,
-          status: req.body.status,
+          // endorsement_rep_name: req.body.endorsement_rep_name,
+          // status: req.body.status,
+          status_id: req.body.status_id,
           remarks: req.body.remarks,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
@@ -137,7 +207,7 @@ const EndorsementsController = {
       }
     });
   },
-  
+
 
 };
 
