@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 
-const { Endorsements, User, UserAccount, UserRole, sequelize } = require("../../models");
+const { Endorsements, User, UserAccount, UserRole, StatusTables, sequelize } = require("../../models");
 const { endorsementsValidator } = require("../endorsements/endorsements_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 
@@ -52,9 +52,13 @@ const EndorsementsController = {
                   model: UserAccount,
                   attributes: ['role_id'],
                   include: { model: UserRole, attributes: ['role_desc'] }
-                }
+                },
               ]
             },
+            {
+              model: StatusTables,
+              attributes: ['status']
+            }
           ]
         });
         res.status(OK).json({ Endorsements: endorsementss });
@@ -82,9 +86,13 @@ const EndorsementsController = {
                   model: UserAccount,
                   attributes: ['role_id'],
                   include: { model: UserRole, attributes: ['role_desc'] }
-                }
-              ]
+                },
+              ],
             },
+            {
+              model: StatusTables,
+              attributes: ['status']
+            }
           ],
           where: { research_id: req.params.research_id },
         });
