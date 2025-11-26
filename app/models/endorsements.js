@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       models.Endorsements.belongsTo(models.User, {
         foreignKey: "endorsement_rep_id",
       });
+      models.Endorsements.belongsTo(models.StatusTables, {
+        foreignKey: "status_id",
+      });
       // models.Endorsements.belongsTo(models.EndorsementRepresentative, {
       //   foreignKey: "endorsement_rep_id",
       // });

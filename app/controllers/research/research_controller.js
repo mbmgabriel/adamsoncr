@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 
 
-const { Research, ResearchDocuments,Departments,  ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, UserAccount, UserRole, sequelize } = require("../../models");
+const { Research, ResearchDocuments, Departments, ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, UserAccount, UserRole, sequelize } = require("../../models");
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 const { researchValidator } = require("../research/research_validator")
 
@@ -70,18 +70,81 @@ const ResearchController = {
   all: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
+
+        const role_id = req.user.role_id;
+
+        if (role_id === 2) {
+          const researches = await Research.findAll({
+            attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
+            include: [
+              {
+                model: User,
+                attributes: ['user_account_id', 'first_name', 'middle_name', 'last_name', 'dept_id'],
+                where: { user_account_id: req.user.id },
+                include: [
+                  { model: Departments, attributes: ['dept_name'] }
+                ]
+              },
+              {
+                model: StatusTables,
+                attributes: ['status'],
+              },
+            ]
+          });
+          res.status(OK).json(researches);
+          return;
+        }
+
+        if ([3, 4, 5].includes(role_id)) {
+
+          const endorsements = await Endorsements.findAll({
+            attributes: ['research_id'],
+            where: { endorsement_rep_id: req.user.id }
+          })
+
+          const researches = await Research.findAll({
+            attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
+            include: [
+              {
+                model: User,
+                attributes: ['user_account_id', 'first_name', 'middle_name', 'last_name', 'dept_id'],
+                // where: { user_account_id: endorsements.map(e=>e?.research_id) },
+                include: [
+                  { model: Departments, attributes: ['dept_name'] }
+                ]
+              },
+              {
+                model: Endorsements,
+                attributes: ['endorsement_rep_id', 'status_id'],
+                where: { endorsement_rep_id: req.user.id },
+                include: {
+                  model: StatusTables,
+                  attributes: ['status']
+                }
+              }
+            ],
+            where: { id: endorsements.map(e => e?.research_id) },
+          });
+          res.status(OK).json(researches);
+          return;
+        }
+
         const researches = await Research.findAll({
           attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
           include: [
             {
               model: User,
-              attributes: ['first_name','middle_name','last_name','dept_id'],
+              attributes: ['first_name', 'middle_name', 'last_name', 'dept_id'],
               include: [
-                {model: Departments,attributes: ['dept_name']}
+                { model: Departments, attributes: ['dept_name'] }
               ]
-            },  
+            },
+            {
+              model: StatusTables,
+              attributes: ['status'],
+            },
           ]
-          
+
         });
         res.status(OK).json(researches);
       } catch (error) {
@@ -99,19 +162,17 @@ const ResearchController = {
           include: [
             {
               model: User,
-              attributes: ['first_name','middle_name','last_name','dept_id'],
+              attributes: ['first_name', 'middle_name', 'last_name', 'dept_id'],
               include: [
-                {model: Departments,attributes: ['dept_name']}
+                { model: Departments, attributes: ['dept_name'] }
               ]
             },
             {
               model: Endorsements,
-              attributes: ['status', 'remarks'],
+              attributes: ['endorsement_rep_id', 'status_id'],
               include: [
-                {
-                  model: EndorsementRepresentative,
-                  attributes: ['rep_name']
-                }
+                { model: User, attributes: ['first_name', 'last_name'] },
+                { model: StatusTables, attributes: ['status'] }
               ]
             },
             {
@@ -149,11 +210,13 @@ const ResearchController = {
           submitted_by: research?.submitted_by,
           submitted_date: research?.submitted_date,
           endorsements: research?.Endorsements?.map(e => {
-            const rep = e?.EndorsementRepresentative
+            const rep = e?.User
+            const status = e?.StatusTable
             return ({
               status_id: e?.status_id,
               remarks: e?.remarks,
-              rep_name: rep?.rep_name,
+              endorsement_rep_name: `${rep?.first_name} ${rep?.last_name}`,
+              status: status?.status
             })
           }),
           research_investigators: research?.ResearchInvestigators?.map(item => ({
@@ -188,7 +251,7 @@ const ResearchController = {
       try {
         const department = await User.findOne({
           attributes: ['dept_id'],
-          where: {id: req.user.id},
+          where: { id: req.user.id },
         })
 
         const documentTypess = await DocumentTypes.findAll({
@@ -213,12 +276,12 @@ const ResearchController = {
 
         const approvingBodies = await User.findAll({
           attributes: ['id', 'first_name', 'last_name'],
-          where: {dept_id: department.dept_id},
+          where: { dept_id: department.dept_id },
           include: [
             {
-              model: UserAccount, attributes: ['role_id'], where: {role_id: [3,4,5]},
-              include: [{model: UserRole, attributes: ['role_desc']},]
-            }, 
+              model: UserAccount, attributes: ['role_id'], where: { role_id: [3, 4, 5] },
+              include: [{ model: UserRole, attributes: ['role_desc'] },]
+            },
           ]
         })
 
@@ -256,16 +319,16 @@ const ResearchController = {
   getByDepartment: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
-        const dept_id=req.params.dept_id;
+        const dept_id = req.params.dept_id;
         const researches = await Research.findAll({
           attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
           include: {
             model: User,
-            attributes: ['user_account_id','last_name','first_name','middle_name','dept_id'],
+            attributes: ['user_account_id', 'last_name', 'first_name', 'middle_name', 'dept_id'],
             include: [
-              {model: Departments, attributes:['dept_name']}
+              { model: Departments, attributes: ['dept_name'] }
             ],
-            where: {dept_id: dept_id}
+            where: { dept_id: dept_id }
           }
         });
         res.status(OK).json(researches);

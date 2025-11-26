@@ -25,6 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       models.Research.belongsTo(models.User, {
         foreignKey: "created_by",
       });
+      models.Research.belongsTo(models.StatusTables, {
+        foreignKey: "status_id",
+      });
     }
   }
   Research.init({
