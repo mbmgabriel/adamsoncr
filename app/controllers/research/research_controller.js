@@ -276,6 +276,7 @@ const ResearchController = {
             const rep = e?.User
             const status = e?.StatusTable
             return ({
+              user_account_id: e?.endorsement_rep_id,
               status_id: e?.status_id,
               remarks: e?.remarks,
               endorsement_rep_name: `${rep?.first_name} ${rep?.last_name}`,

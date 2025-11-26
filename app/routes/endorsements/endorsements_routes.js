@@ -102,6 +102,48 @@ router.get('/research/:research_id', verify_user_account, EndorsementsController
 router.get('/:id', verify_user_account, EndorsementsController.get)
 /**
  * @openapi
+ * /api/v1/endorsements/status/{research_id}/{user_account_id}:
+ *   put:
+ *     tags:
+ *       - Endorsements
+ *     description: UPDATE Endorsements by Research ID and User API
+ *     summary: Update Specific Endorsements by Research ID and User
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/EndorsementsResponse'
+ *     parameters:
+ *       - in: path
+ *         name: research_id
+ *         schema:
+ *          type: integer
+ *         required: true
+ *       - in: path
+ *         name: user_account_id
+ *         schema:
+ *          type: integer
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status_id:
+ *                 type: integer
+ *               remarks:
+ *                 type: string
+ * 
+ */
+router.put('/status/:research_id/:user_account_id', verify_user_account, EndorsementsController.updateByResearchUser)
+/**
+ * @openapi
  * /api/v1/endorsements/{id}:
  *   put:
  *     tags:

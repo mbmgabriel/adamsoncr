@@ -140,6 +140,49 @@ const EndorsementsController = {
     });
   },
 
+  updateByResearchUser: async (req, res) => {
+    await sequelize.transaction(async (t) => {
+      try {
+
+        const endorsementss = await Endorsements.findOne(
+          {
+            where: {
+              research_id: req.params.research_id,
+              endorsement_rep_id: req.params.user_account_id
+            },
+          },
+        );
+
+        if (!endorsementss) {
+          res.status(NOT_FOUND).json({
+            Message: `No matching Endorsements entry with Research id ${req.params.research_id}`,
+          });
+          return;
+        }
+
+        await endorsementss.update({
+          // research_id: req.body.research_id,
+          // endorsement_rep_id: req.body.endorsement_rep_id,
+          // endorsement_rep_name: req.body.endorsement_rep_name,
+          // status: req.body.status,
+          status_id: req.body.status_id,
+          remarks: req.body.remarks,
+          updated_by: req.user.id,
+          updated_at: new Date(Date.now()).toISOString(),
+        });
+
+        res.status(OK).json({
+          Endorsements: endorsementss,
+          Message: "Approving entry updated.",
+        });
+        return;
+      } catch (error) {
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+        return;
+      }
+    });
+  },
+
   update: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
