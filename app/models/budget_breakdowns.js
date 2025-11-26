@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       models.BudgetBreakdowns.belongsTo(models.BudgetBreakdownDetails, {
         foreignKey: "fund_id",
       });
+      models.BudgetBreakdowns.belongsTo(models.Research, {
+        foreignKey: "research_id",
+      });
     }
   }
   BudgetBreakdowns.init({

@@ -21,7 +21,7 @@ const EndorsementsController = {
           // endorsement_rep_name: req.body.endorsement_rep_name,
           // status: req.body.status,
           status_id: req.body.status_id,
-          status: req.body.status,
+          // status: req.body.status,
           remarks: req.body.remarks,
           created_at: req.user.id,
         },

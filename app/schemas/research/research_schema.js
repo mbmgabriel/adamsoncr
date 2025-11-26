@@ -21,8 +21,8 @@
  *           type: string
  *         submitted_date:
  *           type: string
- *         status:
- *           type: string
+ *         status_id:
+ *           type: integer
  *     ResearchResponse:
  *       allOf:
  *         - $ref: '#/components/schemas/Research'
@@ -86,8 +86,8 @@
  *           type: string
  *         submitted_date:
  *           type: string
- *         status:
- *           type: string
+ *         status_id:
+ *           type: integer
  *         research_investigators:
  *           type: array
  *           items:
