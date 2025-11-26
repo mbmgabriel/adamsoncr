@@ -80,6 +80,7 @@ const UserAccountController = {
         college: user_info.college,
         contact_number: user_info.contact_number,
         role_name: user.UserRole.role_name,
+        dept_id: user_info.dept_id,
         // created_by: user.created_by,
         // created_at: user.created_at,
         // updated_by: user.updated_by,

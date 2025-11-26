@@ -91,11 +91,7 @@
  *         research_investigators:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/ResearchInvestigatorsForResearch'
- *         endorsements:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/EndorsementsForResearch'  
+ *             $ref: '#/components/schemas/ResearchInvestigatorsForResearch'  
  *         budget_breakdowns:
  *           type: array
  *           items:

@@ -13,16 +13,20 @@ module.exports = (sequelize, DataTypes) => {
       models.Endorsements.belongsTo(models.Research, {
         foreignKey: "research_id",
       });
-      models.Endorsements.belongsTo(models.EndorsementRepresentative, {
+      models.Endorsements.belongsTo(models.User, {
         foreignKey: "endorsement_rep_id",
       });
+      // models.Endorsements.belongsTo(models.EndorsementRepresentative, {
+      //   foreignKey: "endorsement_rep_id",
+      // });
     }
   }
   Endorsements.init({
     research_id: DataTypes.INTEGER,
     endorsement_rep_id: DataTypes.INTEGER,
-    endorsement_rep_name: DataTypes.STRING,
-    status: DataTypes.STRING,
+    // endorsement_rep_name: DataTypes.STRING,
+    // status: DataTypes.STRING,
+    status_id: DataTypes.INTEGER,
     remarks: DataTypes.TEXT,
     created_by: DataTypes.INTEGER,
     updated_by: DataTypes.INTEGER,

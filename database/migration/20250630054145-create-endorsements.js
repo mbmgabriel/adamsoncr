@@ -15,8 +15,11 @@ module.exports = {
       endorsement_rep_id: {
         type: Sequelize.INTEGER
       },
-      status: {
-        type: Sequelize.STRING
+      status_id: {
+        type: Sequelize.INTEGER
+      },
+      remarks: {
+        type: Sequelize.TEXT
       },
       
       
