@@ -6,31 +6,31 @@ const verify_user_account = require('../../middlewares/auth/verify_user_account'
 
 
 
-// /**
-//  * @openapi
-//  * /api/v1/research/full/create:
-//  *   post:
-//  *     tags:
-//  *       - Research
-//  *     description: CREATE Research API
-//  *     summary: Create New Research
-//  *     security:
-//  *       - bearerAuth: []
-//  *     responses:
-//  *       200:
-//  *         description: Ok
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/ResearchsResponse'
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/ResearchComplete'
-//  */
-// router.post('/full/create', verify_user_account, ResearchController.comprehensiveCreate)
+/**
+ * @openapi
+ * /api/v1/research/full/create:
+ *   post:
+ *     tags:
+ *       - Research
+ *     description: CREATE Research API
+ *     summary: Create New Research
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ResearchsResponse'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ResearchComplete'
+ */
+router.post('/full/create', verify_user_account, ResearchController.comprehensiveCreate)
 /**
  * @openapi
  * /api/v1/research/create:

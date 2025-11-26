@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 
 
-const { Research, ResearchDocuments, Departments, ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, UserAccount, UserRole, sequelize } = require("../../models");
+const { Research, ResearchDocuments, Departments, ResearchCategory, Endorsements, EndorsementRepresentative, ResearchInvestigators, DocumentTypes, BudgetBreakdownDetails, ResearchPurpose, StatusTables, User, UserAccount, UserRole, BudgetBreakdowns, sequelize } = require("../../models");
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 const { researchValidator } = require("../research/research_validator")
 
@@ -16,6 +16,28 @@ const ResearchController = {
 
     await sequelize.transaction(async (t) => {
       try {
+        const department = await User.findOne({
+          attributes: ['dept_id'],
+          where: { id: req.user.id },
+        });
+
+        const approvingBodies = await User.findAll({
+          attributes: ['id'],
+          where: { dept_id: department.dept_id },
+          include: [
+            {
+              model: UserAccount, attributes: ['role_id'], where: { role_id: [3, 4, 5] },
+              include: [{ model: UserRole, attributes: ['role_desc'] },]
+            },
+          ]
+        });
+
+        const endorsements = approvingBodies?.map(e => ({
+          endorsement_rep_id: e.id,
+          status_id: 4,
+        }));
+
+
         const researchs = await Research.create({
           title: req.body.title,
           category: req.body.category,
@@ -27,7 +49,11 @@ const ResearchController = {
           submitted_date: req.body.submitted_date,
           status_id: req.body.status_id,
           created_by: req.user.id,
+          Endorsements: endorsements,
         },
+         {
+            include: [Endorsements],
+          },
           { transaction: t }
         );
         res.status(CREATED).json({ Research: researchs, Message: 'Research entry created.' });
@@ -45,6 +71,27 @@ const ResearchController = {
 
     await sequelize.transaction(async (t) => {
       try {
+        const department = await User.findOne({
+          attributes: ['dept_id'],
+          where: { id: req.user.id },
+        });
+
+        const approvingBodies = await User.findAll({
+          attributes: ['id'],
+          where: { dept_id: department.dept_id },
+          include: [
+            {
+              model: UserAccount, attributes: ['role_id'], where: { role_id: [3, 4, 5] },
+              include: [{ model: UserRole, attributes: ['role_desc'] },]
+            },
+          ]
+        });
+
+        const endorsements = approvingBodies?.map(e => ({
+          endorsement_rep_id: e.id,
+          status_id: 4,
+        }));
+
         const researchs = await Research.create({
           title: req.body.title,
           category: req.body.category,
@@ -54,9 +101,15 @@ const ResearchController = {
           ethical_considerations: req.body.ethical_considerations,
           submitted_by: req.body.submitted_by,
           submitted_date: req.body.submitted_date,
-          status_id: req.body.status_id,
-          created_at: req.user.id,
+          status_id: 3,
+          ResearchInvestigators: req.body.research_investigators,
+          BudgetBreakdowns: req.body.budget_breakdowns,
+          Endorsements: endorsements,
+          created_by: req.user.id,
         },
+          {
+            include: [ResearchInvestigators, BudgetBreakdowns, Endorsements],
+          },
           { transaction: t }
         );
 
@@ -188,6 +241,16 @@ const ResearchController = {
                   attributes: ['document_name']
                 }
               ]
+            },
+            {
+              model: BudgetBreakdowns,
+              attributes: ['fund_id', 'amount'],
+              include: [
+                {
+                  model: BudgetBreakdownDetails,
+                  attributes: ['fund_name']
+                }
+              ]
             }
           ]
         });
@@ -234,7 +297,16 @@ const ResearchController = {
               document_filepath: item?.document_filepath,
               document_name: doc_type?.document_name,
             })
-          })
+          }),
+          budget_breakdowns: research?.BudgetBreakdowns?.map(item => {
+            const fund = item?.BudgetBreakdownDetail;
+            return ({
+              fund_id: item?.fund_id,
+              amount: item?.amount,
+              fund_name: fund?.fund_name
+            })
+          }),
+          User: research?.User,
         }
 
         // res.status(OK).json({Research: research, Categories: categories});

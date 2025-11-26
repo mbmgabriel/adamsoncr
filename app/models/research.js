@@ -28,6 +28,9 @@ module.exports = (sequelize, DataTypes) => {
       models.Research.belongsTo(models.StatusTables, {
         foreignKey: "status_id",
       });
+      models.Research.hasMany(models.BudgetBreakdowns, {
+        foreignKey: "research_id",
+      });
     }
   }
   Research.init({
