@@ -1,8 +1,9 @@
 const { Op } = require("sequelize");
 
-const { BudgetBreakdowns, sequelize } = require("../../models");
+const { BudgetBreakdowns, BudgetBreakdownDetails, sequelize } = require("../../models");
 const { budgetBreakdownsValidator } = require("../budget_breakdowns/budget_breakdowns_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
+const { response } = require("express");
 
 
 const BudgetBreakdownsController = {
@@ -34,14 +35,25 @@ const BudgetBreakdownsController = {
     await sequelize.transaction(async (t) => {
       try {
         const budgetBreakdownss = await BudgetBreakdowns.findAll({
-          attributes: ['research_id', 'fund_id', 'amount'],
+          attributes: ['id','research_id', 'fund_id', 'amount'],
+          include: [
+            {
+              model: BudgetBreakdownDetails,
+              attributes: ['fund_name', 'fund_desc'],
+            }
+          ]
         });
 
-        const response = budgetBreakdownss.map(bb =>({
+        const response = budgetBreakdownss.map(bb => { 
+          const details = bb?.BudgetBreakdownDetail;
+          return ({
+          id: bb.id,
           research_id: bb.research_id,
           fund_id: bb.fund_id,
-          amount: parseFloat(bb.amount).toFixed(2)
-        }))
+          amount: parseFloat(bb.amount).toFixed(2),
+          fund_name: details?.fund_name,
+          fund_desc: details?.fund_desc,
+        })})
 
         res.status(OK).json({ BudgetBreakdowns: response });
       } catch (error) {
@@ -55,15 +67,26 @@ const BudgetBreakdownsController = {
     await sequelize.transaction(async (t) => {
       try {
         const budgetBreakdownss = await BudgetBreakdowns.findAll({
-          attributes: ['research_id', 'fund_id', 'amount'],
+          attributes: ['id','research_id', 'fund_id', 'amount'],
           where: { id: req.params.id },
+          include: [
+            {
+              model: BudgetBreakdownDetails,
+              attributes: ['fund_name', 'fund_desc'],
+            }
+          ]
         });
 
-        const response = budgetBreakdownss.map(bb =>({
+        const response = budgetBreakdownss.map(bb =>{ 
+          const details = bb?.BudgetBreakdownDetail;
+          return ({
+          id: bb.id,
           research_id: bb.research_id,
           fund_id: bb.fund_id,
-          amount: parseFloat(bb.amount).toFixed(2)
-        }))
+          amount: parseFloat(bb.amount).toFixed(2),
+          fund_name: details?.fund_name,
+          fund_desc: details?.fund_desc,
+        })})
 
         res.status(OK).json({ BudgetBreakdowns: response });
         return;
