@@ -2,20 +2,20 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('notifications', {
+    await queryInterface.createTable('processes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      notification: {
-        type: Sequelize.TEXT
-      },
-      user_account_id: {
+      from_id: {
         type: Sequelize.INTEGER
       },
-      read_status: {
+      to_id: {
+        type: Sequelize.INTEGER
+      },
+      action: {
         type: Sequelize.INTEGER
       },
       
@@ -42,6 +42,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('notifications');
+    await queryInterface.dropTable('processes');
   }
 };

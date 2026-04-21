@@ -143,12 +143,12 @@ const EndorsementsController = {
   updateByResearchUser: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
-
         const endorsementss = await Endorsements.findOne(
           {
             where: {
               research_id: req.params.research_id,
-              endorsement_rep_id: req.params.user_account_id
+              // endorsement_rep_id: req.params.user_account_id
+              endorsement_rep_id: req.user.id
             },
           },
         );
