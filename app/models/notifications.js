@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   notifications.init({
     notification: DataTypes.TEXT,
     user_account_id: DataTypes.INTEGER,
-    role_id: DataTypes.INTEGER,
+    read_status: DataTypes.INTEGER,
     created_by: DataTypes.INTEGER,
     updated_by: DataTypes.INTEGER,
     deleted_by: DataTypes.INTEGER,

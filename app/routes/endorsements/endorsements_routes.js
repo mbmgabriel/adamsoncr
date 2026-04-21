@@ -102,7 +102,7 @@ router.get('/research/:research_id', verify_user_account, EndorsementsController
 router.get('/:id', verify_user_account, EndorsementsController.get)
 /**
  * @openapi
- * /api/v1/endorsements/status/{research_id}/{user_account_id}:
+ * /api/v1/endorsements/status/{research_id}:
  *   put:
  *     tags:
  *       - Endorsements
@@ -123,11 +123,6 @@ router.get('/:id', verify_user_account, EndorsementsController.get)
  *         schema:
  *          type: integer
  *         required: true
- *       - in: path
- *         name: user_account_id
- *         schema:
- *          type: integer
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -141,7 +136,7 @@ router.get('/:id', verify_user_account, EndorsementsController.get)
  *                 type: string
  * 
  */
-router.put('/status/:research_id/:user_account_id', verify_user_account, EndorsementsController.updateByResearchUser)
+router.put('/status/:research_id', verify_user_account, EndorsementsController.updateByResearchUser)
 /**
  * @openapi
  * /api/v1/endorsements/{id}:

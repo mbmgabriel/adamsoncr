@@ -13,6 +13,7 @@ const { BudgetBreakdownsRoutes } = require("./budget_breakdowns/budget_breakdown
 const { DepartmentsRoutes } = require("./departments/departments_routes")
 const { BudgetBreakdownDetailsRoutes } = require("./budget_breakdown_details/budget_breakdown_details_routes")
 const { StatusTablesRoutes } = require("./status_tables/status_tables_routes")
+const { ProcessesRoutes } = require("./processes/processes_routes")
 
 var router = express.Router();
 
@@ -30,5 +31,6 @@ router.use("/budget_breakdowns", BudgetBreakdownsRoutes)
 router.use("/departments", DepartmentsRoutes)
 router.use("/budget_breakdown_details", BudgetBreakdownDetailsRoutes)
 router.use("/status_tables", StatusTablesRoutes)
+router.use("/processes", ProcessesRoutes)
 
 module.exports = router;

@@ -47,7 +47,8 @@ const ResearchController = {
           ethical_considerations: req.body.ethical_considerations,
           // submitted_by: req.body.submitted_by,
           submitted_date: req.body.submitted_date,
-          status_id: req.body.status_id,
+          // status_id: req.body.status_id,
+          status_id: 1,
           created_by: req.user.id,
           Endorsements: endorsements,
         },
@@ -101,7 +102,8 @@ const ResearchController = {
           ethical_considerations: req.body.ethical_considerations,
           submitted_by: req.body.submitted_by,
           submitted_date: req.body.submitted_date,
-          status_id: 3,
+          // status_id: 3,
+          status_id: 1,
           ResearchInvestigators: req.body.research_investigators,
           BudgetBreakdowns: req.body.budget_breakdowns,
           Endorsements: endorsements,
@@ -140,7 +142,7 @@ const ResearchController = {
               },
               {
                 model: StatusTables,
-                attributes: ['status'],
+                attributes: ['id','status'],
               },
             ]
           });
@@ -153,8 +155,52 @@ const ResearchController = {
           const endorsements = await Endorsements.findAll({
             attributes: ['research_id'],
             where: { endorsement_rep_id: req.user.id }
-          })
+          });
 
+          const research_ids = endorsements.map(ce=> ce.research_id)
+
+          const checkEndorsements = await Endorsements.findAll({
+            where: {research_id: research_ids},
+            include: [
+              {
+                model: User,
+                attributes: ['id',],
+                include: [
+                  {
+                    model: UserAccount,
+                    attributes: ['role_id'],
+                  }
+                ]
+              }
+            ]
+          });
+
+          
+          const role_status = checkEndorsements.map(ce => ({
+            role_id: ce.User.UserAccount.role_id,
+            research_id: ce.research_id,
+            status_id: ce.status_id,
+          }))
+
+          let display_research_ids = []
+
+          research_ids.forEach(element => {
+            let rcApproved = role_status.find(rs => rs.role_id===3 && element===rs.research_id).status_id === 6
+            let chairApproved = role_status.find(rs => rs.role_id===4 && element===rs.research_id).status_id === 6
+            let deanApproved = role_status.find(rs => rs.role_id===5 && element===rs.research_id).status_id === 6
+
+            if (role_id===5 && rcApproved && chairApproved){
+              display_research_ids.push(element)
+            }
+            if (role_id===4 && rcApproved){
+              display_research_ids.push(element)
+            }
+            if (role_id===3){
+              display_research_ids.push(element)
+            }
+
+          });
+          
           const researches = await Research.findAll({
             attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
             include: [
@@ -172,12 +218,16 @@ const ResearchController = {
                 where: { endorsement_rep_id: req.user.id },
                 include: {
                   model: StatusTables,
-                  attributes: ['status']
+                  attributes: ['id','status']
                 }
               }
             ],
-            where: { id: endorsements.map(e => e?.research_id) },
+            // where: { id: endorsements.map(e => e?.research_id) },
+            where: { id: display_research_ids },
           });
+
+          // console.log(role_status)
+
           res.status(OK).json(researches);
           return;
         }
@@ -194,7 +244,7 @@ const ResearchController = {
             },
             {
               model: StatusTables,
-              attributes: ['status'],
+              attributes: ['id','status'],
             },
           ]
 
