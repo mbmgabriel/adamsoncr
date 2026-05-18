@@ -151,7 +151,7 @@ const ResearchController = {
         }
 
         if ([3, 4, 5].includes(role_id)) {
-
+          
           const endorsements = await Endorsements.findAll({
             attributes: ['research_id'],
             where: { endorsement_rep_id: req.user.id }
@@ -185,9 +185,9 @@ const ResearchController = {
           let display_research_ids = []
 
           research_ids.forEach(element => {
-            let rcApproved = role_status.find(rs => rs.role_id===3 && element===rs.research_id).status_id === 6
-            let chairApproved = role_status.find(rs => rs.role_id===4 && element===rs.research_id).status_id === 6
-            let deanApproved = role_status.find(rs => rs.role_id===5 && element===rs.research_id).status_id === 6
+            let rcApproved = role_status.find(rs => rs.role_id===3 && element===rs.research_id)?.status_id === 6
+            let chairApproved = role_status.find(rs => rs.role_id===4 && element===rs.research_id)?.status_id === 6
+            let deanApproved = role_status.find(rs => rs.role_id===5 && element===rs.research_id)?.status_id === 6
 
             if (role_id===5 && rcApproved && chairApproved){
               display_research_ids.push(element)
