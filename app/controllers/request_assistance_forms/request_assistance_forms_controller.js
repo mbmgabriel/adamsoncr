@@ -45,7 +45,12 @@ const RequestAssistanceFormsController = {
             {
               model: sequelize.models.CAssistanceFormProofs,
               attributes: ['proof_id'],
-              where: { is_active: 1 },
+              include: [
+                {
+                  model: sequelize.models.SAssistanceFormProofs,
+                  attributes: ['name'],
+                },
+              ],
             },
           ],
         });
@@ -67,7 +72,12 @@ const RequestAssistanceFormsController = {
             {
               model: sequelize.models.CAssistanceFormProofs,
               attributes: ['proof_id'],
-              where: { is_active: 1 },
+              include: [
+                {
+                  model: sequelize.models.SAssistanceFormProofs,
+                  attributes: ['name'],
+                },
+              ],
             },
           ],
         });
@@ -91,10 +101,18 @@ const RequestAssistanceFormsController = {
             {
               model: sequelize.models.CAssistanceFormProofs,
               attributes: ['proof_id'],
-              where: { is_active: 1 },
+              include: [
+                {
+                  model: sequelize.models.SAssistanceFormProofs,
+                  attributes: ['name'],
+                },
+              ],
             },
           ],
         });
+
+        // requestAssistanceFormsValidator.CAssistanceFormProofs
+
         res.status(OK).json({RequestAssistanceForms: requestAssistanceFormss});
       } catch (error) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });

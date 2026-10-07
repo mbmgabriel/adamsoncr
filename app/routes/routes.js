@@ -17,6 +17,11 @@ const { ProcessesRoutes } = require("./processes/processes_routes")
 const { RequestAssistanceFormsRoutes } = require("./request_assistance_forms/request_assistance_forms_routes")
 const { CAssistanceFormProofsRoutes } = require("./c_assistance_form_proofs/c_assistance_form_proofs_routes")
 const { SAssistanceFormProofsRoutes } = require("./s_assistance_form_proofs/s_assistance_form_proofs_routes")
+const { IncentiveFormsRoutes } = require("./incentive_forms/incentive_forms_routes")
+const { CAttachmentInfosRoutes } = require("./c_attachment_infos/c_attachment_infos_routes")
+const { SAttachmentInfosRoutes } = require("./s_attachment_infos/s_attachment_infos_routes")
+const { SIncentiveTypesRoutes } = require("./s_incentive_types/s_incentive_types_routes")
+const { SPeerReviewProofRoutes } = require("./s_peer_review_proof/s_peer_review_proof_routes")
 
 var router = express.Router();
 
@@ -38,5 +43,10 @@ router.use("/processes", ProcessesRoutes)
 router.use("/request-assistance-forms", RequestAssistanceFormsRoutes)
 router.use("/c-assistance-form-proofs", CAssistanceFormProofsRoutes)
 router.use("/s-assistance-form-proofs", SAssistanceFormProofsRoutes)
+router.use("/incentive-forms", IncentiveFormsRoutes)
+router.use("/c-attachment-infos", CAttachmentInfosRoutes)
+router.use("/s-attachment-infos", SAttachmentInfosRoutes)
+router.use("/s-incentive-types", SIncentiveTypesRoutes)
+router.use("/s-peer-review-proof", SPeerReviewProofRoutes)
 
 module.exports = router;
