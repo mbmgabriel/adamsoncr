@@ -14,6 +14,9 @@ const { DepartmentsRoutes } = require("./departments/departments_routes")
 const { BudgetBreakdownDetailsRoutes } = require("./budget_breakdown_details/budget_breakdown_details_routes")
 const { StatusTablesRoutes } = require("./status_tables/status_tables_routes")
 const { ProcessesRoutes } = require("./processes/processes_routes")
+const { RequestAssistanceFormsRoutes } = require("./request_assistance_forms/request_assistance_forms_routes")
+const { CAssistanceFormProofsRoutes } = require("./c_assistance_form_proofs/c_assistance_form_proofs_routes")
+const { SAssistanceFormProofsRoutes } = require("./s_assistance_form_proofs/s_assistance_form_proofs_routes")
 
 var router = express.Router();
 
@@ -32,5 +35,8 @@ router.use("/departments", DepartmentsRoutes)
 router.use("/budget_breakdown_details", BudgetBreakdownDetailsRoutes)
 router.use("/status_tables", StatusTablesRoutes)
 router.use("/processes", ProcessesRoutes)
+router.use("/request-assistance-forms", RequestAssistanceFormsRoutes)
+router.use("/c-assistance-form-proofs", CAssistanceFormProofsRoutes)
+router.use("/s-assistance-form-proofs", SAssistanceFormProofsRoutes)
 
 module.exports = router;
