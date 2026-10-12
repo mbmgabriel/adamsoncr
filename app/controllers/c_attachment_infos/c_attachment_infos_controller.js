@@ -36,7 +36,7 @@ const CAttachmentInfosController = {
     await sequelize.transaction(async (t) => {
       try {
         const cAttachmentInfoss = await CAttachmentInfos.findAll({
-          attributes: ['incentive_form_id','info_id','is_active','attachment_file'],
+          attributes: ['id','incentive_form_id','info_id','is_active','attachment_file'],
         });
         res.status(OK).json({CAttachmentInfos: cAttachmentInfoss});
       } catch (error) {
@@ -50,7 +50,7 @@ const CAttachmentInfosController = {
     await sequelize.transaction(async (t) => {
       try {
         const cAttachmentInfoss = await CAttachmentInfos.findAll({
-          attributes: ['incentive_form_id','info_id','is_active','attachment_file'],
+          attributes: ['id','incentive_form_id','info_id','is_active','attachment_file'],
           where: {id: req.params.id},
         });
 

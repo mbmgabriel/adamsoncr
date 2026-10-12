@@ -33,7 +33,7 @@ const SIncentiveTypesController = {
     await sequelize.transaction(async (t) => {
       try {
         const sIncentiveTypess = await SIncentiveTypes.findAll({
-          attributes: ['name'],
+          attributes: ['id','name'],
         });
         res.status(OK).json({SIncentiveTypes: sIncentiveTypess});
       } catch (error) {
@@ -47,7 +47,7 @@ const SIncentiveTypesController = {
     await sequelize.transaction(async (t) => {
       try {
         const sIncentiveTypess = await SIncentiveTypes.findAll({
-          attributes: ['name'],
+          attributes: ['id','name'],
           where: {id: req.params.id},
         });
 

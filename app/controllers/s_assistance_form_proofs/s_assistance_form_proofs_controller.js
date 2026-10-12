@@ -33,7 +33,7 @@ const SAssistanceFormProofsController = {
     await sequelize.transaction(async (t) => {
       try {
         const sAssistanceFormProofss = await SAssistanceFormProofs.findAll({
-          attributes: ['name'],
+          attributes: ['id','name'],
         });
         res.status(OK).json({SAssistanceFormProofs: sAssistanceFormProofss});
       } catch (error) {
@@ -47,7 +47,7 @@ const SAssistanceFormProofsController = {
     await sequelize.transaction(async (t) => {
       try {
         const sAssistanceFormProofss = await SAssistanceFormProofs.findAll({
-          attributes: ['name'],
+          attributes: ['id','name'],
           where: {id: req.params.id},
         });
 

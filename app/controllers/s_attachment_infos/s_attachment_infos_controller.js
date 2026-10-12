@@ -33,7 +33,7 @@ const SAttachmentInfosController = {
     await sequelize.transaction(async (t) => {
       try {
         const sAttachmentInfoss = await SAttachmentInfos.findAll({
-          attributes: ['name'],
+          attributes: ['id','name'],
         });
         res.status(OK).json({SAttachmentInfos: sAttachmentInfoss});
       } catch (error) {
@@ -47,7 +47,7 @@ const SAttachmentInfosController = {
     await sequelize.transaction(async (t) => {
       try {
         const sAttachmentInfoss = await SAttachmentInfos.findAll({
-          attributes: ['name'],
+          attributes: ['id','name'],
           where: {id: req.params.id},
         });
 

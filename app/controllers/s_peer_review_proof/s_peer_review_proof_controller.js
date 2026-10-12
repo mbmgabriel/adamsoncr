@@ -33,7 +33,7 @@ const SPeerReviewProofController = {
     await sequelize.transaction(async (t) => {
       try {
         const sPeerReviewProofs = await SPeerReviewProof.findAll({
-          attributes: ['name'],
+          attributes: ['id','name'],
         });
         res.status(OK).json({SPeerReviewProof: sPeerReviewProofs});
       } catch (error) {
@@ -47,7 +47,7 @@ const SPeerReviewProofController = {
     await sequelize.transaction(async (t) => {
       try {
         const sPeerReviewProofs = await SPeerReviewProof.findAll({
-          attributes: ['name'],
+          attributes: ['id','name'],
           where: {id: req.params.id},
         });
 

@@ -35,7 +35,7 @@ const CAssistanceFormProofsController = {
     await sequelize.transaction(async (t) => {
       try {
         const cAssistanceFormProofss = await CAssistanceFormProofs.findAll({
-          attributes: ['request_assistance_form_id','proof_id','is_active'],
+          attributes: ['id','request_assistance_form_id','proof_id','is_active'],
         });
         res.status(OK).json({CAssistanceFormProofs: cAssistanceFormProofss});
       } catch (error) {
@@ -49,7 +49,7 @@ const CAssistanceFormProofsController = {
     await sequelize.transaction(async (t) => {
       try {
         const cAssistanceFormProofss = await CAssistanceFormProofs.findAll({
-          attributes: ['request_assistance_form_id','proof_id','is_active'],
+          attributes: ['id','request_assistance_form_id','proof_id','is_active'],
           where: {id: req.params.id},
         });
 
