@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 
-const { IncentiveForms, sequelize } = require("../../models");
+const { IncentiveForms, sequelize, CAttachmentInfos } = require("../../models");
 const { incentiveFormsValidator } = require("../incentive_forms/incentive_forms_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 
@@ -13,8 +13,10 @@ const IncentiveFormsController = {
             res.status(PRECONDITION_FAILED).json({ message: 'IncentiveForms required' });
         }
 
+
         await sequelize.transaction(async (t) => {
             try {
+
                 const incentiveFormss = await IncentiveForms.create({
                     name_of_authors: req.body.name_of_authors,
                     email_address: req.body.email_address,
@@ -30,7 +32,11 @@ const IncentiveFormsController = {
                     peer_review_proof_id: req.body.peer_review_proof_id,
                     created_by: req.user.id,
                     created_at: new Date(Date.now()).toISOString(),
+                    CAttachmentInfos: req.body.CAttachmentInfos,
                 },
+                    {
+                        include: [CAttachmentInfos],
+                    },
                     { transaction: t }
                 );
                 res.status(CREATED).json({ IncentiveForms: incentiveFormss, Message: 'IncentiveForms entry created.' });
@@ -44,7 +50,7 @@ const IncentiveFormsController = {
         await sequelize.transaction(async (t) => {
             try {
                 const incentiveFormss = await IncentiveForms.findAll({
-                    attributes: ['name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
+                    attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
                     include: [
                         {
                             model: sequelize.models.SIncentiveTypes,
@@ -78,8 +84,8 @@ const IncentiveFormsController = {
         await sequelize.transaction(async (t) => {
             try {
                 const incentiveFormss = await IncentiveForms.findAll({
-                    attributes: ['name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id',['created_by', 'user_account_id']],
-                    where: {id: req.params.id},
+                    attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
+                    where: { id: req.params.id },
                     include: [
                         {
                             model: sequelize.models.SIncentiveTypes,
@@ -115,8 +121,8 @@ const IncentiveFormsController = {
         await sequelize.transaction(async (t) => {
             try {
                 const incentiveFormss = await IncentiveForms.findAll({
-                    attributes: ['name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
-                    where: {created_by: req.user.id},
+                    attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
+                    where: { created_by: req.user.id },
                     include: [
                         {
                             model: sequelize.models.SIncentiveTypes,

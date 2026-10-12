@@ -19,8 +19,14 @@
  *           type: string
  *         acceptance_date:
  *           type: string
+ *           format: date
  *         conference_date:
  *           type: string
+ *           format: date
+ *         CAssistanceFormProofs:
+ *           type: array
+ *           items:
+ *            $ref: '#/components/schemas/RequestAssistanceFormsProofs'
  *     RequestAssistanceFormsResponse:
  *       allOf:
  *         - $ref: '#/components/schemas/RequestAssistanceForms'
@@ -29,4 +35,13 @@
  *       type: array
  *       items:
  *         $ref: '#/components/schemas/RequestAssistanceFormsResponse'
+ *     RequestAssistanceFormsProofs:
+ *       type: object
+ *       properties:
+ *         proof_id:
+ *           type: integer
+ *           default: 1
+ *         is_active:
+ *           type: integer
+ *           default: 1
  */
