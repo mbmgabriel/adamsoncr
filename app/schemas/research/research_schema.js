@@ -11,18 +11,21 @@
  *           type: string
  *         purpose_id:
  *           type: integer
+ *           default: 1
  *         version_number:
  *           type: string
  *         research_duration:
  *           type: string
  *         ethical_considerations:
  *           type: integer
+ *           default: 1
  *         submitted_by:
  *           type: string
  *         submitted_date:
  *           type: string
  *         status_id:
  *           type: integer
+ *           default: 1
  *     ResearchResponse:
  *       allOf:
  *         - $ref: '#/components/schemas/Research'
@@ -64,9 +67,11 @@
  *       properties:
  *         fund_id:
  *           type: integer
+ *           default: 1
  *         amount:
  *           type: number
  *           format: double
+ *           default: 1
  *     ResearchComplete:
  *       type: object
  *       properties:
@@ -76,18 +81,22 @@
  *           type: string
  *         purpose_id:
  *           type: integer
+ *           default: 1
  *         version_number:
  *           type: string
  *         research_duration:
  *           type: string
  *         ethical_considerations:
  *           type: integer
+ *           default: 1
  *         submitted_by:
  *           type: string
  *         submitted_date:
  *           type: string
+ *           format: date
  *         status_id:
  *           type: integer
+ *           default: 1
  *         research_investigators:
  *           type: array
  *           items:

@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       models.IncentiveForms.belongsTo(models.SIncentiveTypes, { foreignKey: 'incentive_type_id' });
       models.IncentiveForms.belongsTo(models.SPeerReviewProof, { foreignKey: 'peer_review_proof_id' });
       models.IncentiveForms.hasMany(models.CAttachmentInfos, { foreignKey: 'incentive_form_id' });
+      models.IncentiveForms.hasMany(models.Endorsements, { foreignKey: 'research_id' });
     }
   }
   IncentiveForms.init({

@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 
-const { Endorsements, User, UserAccount, UserRole, StatusTables, sequelize } = require("../../models");
+const { Endorsements, User, UserAccount, UserRole, StatusTables, FormTypes, sequelize } = require("../../models");
 const { endorsementsValidator } = require("../endorsements/endorsements_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 
@@ -24,6 +24,7 @@ const EndorsementsController = {
           // status: req.body.status,
           remarks: req.body.remarks,
           created_at: req.user.id,
+          form_type_id: req.body.form_type_id,
         },
           { transaction: t }
         );
@@ -42,7 +43,9 @@ const EndorsementsController = {
             // 'endorsement_rep_name',
             // 'status',
             'status_id',
-            'remarks'],
+            'remarks',
+            'form_type_id'
+          ],
           include: [
             {
               model: User,
@@ -58,6 +61,10 @@ const EndorsementsController = {
             {
               model: StatusTables,
               attributes: ['status']
+            },
+            {
+              model: FormTypes,
+              attributes: ['form_type']
             }
           ]
         });
@@ -76,7 +83,9 @@ const EndorsementsController = {
             // 'endorsement_rep_name',
             // 'status',
             'status_id',
-            'remarks'],
+            'remarks',
+            'form_type_id'
+          ],
           include: [
             {
               model: User,
@@ -92,6 +101,10 @@ const EndorsementsController = {
             {
               model: StatusTables,
               attributes: ['status']
+            },
+            {
+              model: FormTypes,
+              attributes: ['form_type']
             }
           ],
           where: { research_id: req.params.research_id },
@@ -106,6 +119,53 @@ const EndorsementsController = {
     });
   },
   // where: {id: req.params.id},
+
+
+  getByResearchIdFormType: async (req, res) => {
+    await sequelize.transaction(async (t) => {
+      try {
+        const endorsementss = await Endorsements.findAll({
+          attributes: ['research_id', 'endorsement_rep_id',
+            // 'endorsement_rep_name',
+            // 'status',
+            'status_id',
+            'remarks',
+            'form_type_id'
+          ],
+          include: [
+            {
+              model: User,
+              attributes: ['first_name', 'middle_name', 'last_name', 'dept_id'],
+              include: [
+                {
+                  model: UserAccount,
+                  attributes: ['role_id'],
+                  include: { model: UserRole, attributes: ['role_desc'] }
+                },
+              ],
+            },
+            {
+              model: StatusTables,
+              attributes: ['status']
+            },
+            {
+              model: FormTypes,
+              attributes: ['form_type']
+            }
+          ],
+          where: { research_id: req.params.research_id, form_type_id: req.params.form_type_id },
+        });
+        res.status(OK).json({ Endorsements: endorsementss });
+        return;
+      } catch (error) {
+        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+        return;
+      }
+    });
+  },
+
+
+
   get: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
@@ -114,7 +174,9 @@ const EndorsementsController = {
             // 'endorsement_rep_name',
             // 'status',
             'status_id',
-            'remarks'],
+            'remarks',
+            'form_type_id'
+          ],
           include: [
             {
               model: User,
@@ -127,6 +189,10 @@ const EndorsementsController = {
                 }
               ]
             },
+            {
+              model: FormTypes,
+              attributes: ['form_type']
+            }
           ],
           where: { id: req.params.id },
         });
@@ -148,7 +214,8 @@ const EndorsementsController = {
             where: {
               research_id: req.params.research_id,
               // endorsement_rep_id: req.params.user_account_id
-              endorsement_rep_id: req.user.id
+              endorsement_rep_id: req.user.id,
+              form_type_id: req.params.form_type_id ? req.params.form_type_id : 1
             },
           },
         );
@@ -167,6 +234,7 @@ const EndorsementsController = {
           // status: req.body.status,
           status_id: req.body.status_id,
           remarks: req.body.remarks,
+          form_type_id: req.body.form_type_id,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
         });
@@ -209,6 +277,7 @@ const EndorsementsController = {
           // status: req.body.status,
           status_id: req.body.status_id,
           remarks: req.body.remarks,
+          form_type_id: req.body.form_type_id,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
         });

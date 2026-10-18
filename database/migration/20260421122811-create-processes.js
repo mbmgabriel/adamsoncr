@@ -3,12 +3,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('processes', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
+      // id: {
+      //   allowNull: false,
+      //   autoIncrement: true,
+      //   primaryKey: true,
+      //   type: Sequelize.INTEGER
+      // },
       from_id: {
         type: Sequelize.INTEGER
       },
@@ -18,6 +18,14 @@ module.exports = {
       action: {
         type: Sequelize.INTEGER
       },
+      form_type_id: {
+        type: Sequelize.INTEGER
+      },
+      action_type : {
+        type: Sequelize.STRING
+      },
+
+
       
       created_by: {
         type: Sequelize.INTEGER

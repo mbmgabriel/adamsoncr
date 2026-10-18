@@ -22,6 +22,7 @@ const { CAttachmentInfosRoutes } = require("./c_attachment_infos/c_attachment_in
 const { SAttachmentInfosRoutes } = require("./s_attachment_infos/s_attachment_infos_routes")
 const { SIncentiveTypesRoutes } = require("./s_incentive_types/s_incentive_types_routes")
 const { SPeerReviewProofRoutes } = require("./s_peer_review_proof/s_peer_review_proof_routes")
+const { FormTypesRoutes } = require("./form_types/form_types_routes")
 
 var router = express.Router();
 
@@ -48,5 +49,6 @@ router.use("/c-attachment-infos", CAttachmentInfosRoutes)
 router.use("/s-attachment-infos", SAttachmentInfosRoutes)
 router.use("/s-incentive-types", SIncentiveTypesRoutes)
 router.use("/s-peer-review-proof", SPeerReviewProofRoutes)
+router.use("/form-types", FormTypesRoutes)
 
 module.exports = router;

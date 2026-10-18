@@ -22,6 +22,15 @@ module.exports = (sequelize, DataTypes) => {
       // models.Endorsements.belongsTo(models.EndorsementRepresentative, {
       //   foreignKey: "endorsement_rep_id",
       // });
+      models.Endorsements.belongsTo(models.FormTypes, {
+        foreignKey: "form_type_id",
+      });
+      models.Endorsements.belongsTo(models.RequestAssistanceForms, {
+        foreignKey: "research_id",
+      });
+      models.Endorsements.belongsTo(models.IncentiveForms, {
+        foreignKey: "research_id",
+      });
     }
   }
   Endorsements.init({
@@ -34,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     created_by: DataTypes.INTEGER,
     updated_by: DataTypes.INTEGER,
     deleted_by: DataTypes.INTEGER,
+    form_type_id: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Endorsements',

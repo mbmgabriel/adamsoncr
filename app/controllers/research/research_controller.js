@@ -27,16 +27,35 @@ const ResearchController = {
           include: [
             {
               model: UserAccount, attributes: ['role_id'], where: { role_id: [3, 4, 5] },
-              include: [{ model: UserRole, attributes: ['role_desc'] },]
+              include: [{ model: UserRole, attributes: ['role_desc'] },],
+              // limit: 1,
+            },
+          ]
+        });
+
+        const otherApprovingBodies = await User.findAll({
+          attributes: ['id'],
+          // where: { dept_id: department.dept_id },
+          include: [
+            {
+              model: UserAccount, attributes: ['role_id'], where: { role_id: [6, 7] },
+              include: [{ model: UserRole, attributes: ['role_desc'] },],
+              // limit: 1,
             },
           ]
         });
 
         const endorsements = approvingBodies?.map(e => ({
+          form_type_id: 1,
           endorsement_rep_id: e.id,
           status_id: 4,
         }));
 
+        endorsements.push(...otherApprovingBodies?.map(e => ({
+          form_type_id: 1,
+          endorsement_rep_id: e.id,
+          status_id: 4,
+        })));
 
         const researchs = await Research.create({
           title: req.body.title,
@@ -52,7 +71,7 @@ const ResearchController = {
           created_by: req.user.id,
           Endorsements: endorsements,
         },
-         {
+          {
             include: [Endorsements],
           },
           { transaction: t }
@@ -82,16 +101,35 @@ const ResearchController = {
           where: { dept_id: department.dept_id },
           include: [
             {
-              model: UserAccount, attributes: ['role_id'], where: { role_id: [3, 4, 5] },
+              model: UserAccount, attributes: ['role_id'], where: { role_id: [3, 4, 5, 6, 7] },
               include: [{ model: UserRole, attributes: ['role_desc'] },]
             },
           ]
         });
 
+        const otherApprovingBodies = await User.findAll({
+          attributes: ['id'],
+          // where: { dept_id: department.dept_id },
+          include: [
+            {
+              model: UserAccount, attributes: ['role_id'], where: { role_id: [6, 7] },
+              include: [{ model: UserRole, attributes: ['role_desc'] },],
+              // limit: 1,
+            },
+          ]
+        });
+
         const endorsements = approvingBodies?.map(e => ({
+          form_type_id: 1,
           endorsement_rep_id: e.id,
           status_id: 4,
         }));
+
+        endorsements.push(...otherApprovingBodies?.map(e => ({
+          form_type_id: 1,
+          endorsement_rep_id: e.id,
+          status_id: 4,
+        })));
 
         const researchs = await Research.create({
           title: req.body.title,
@@ -142,7 +180,7 @@ const ResearchController = {
               },
               {
                 model: StatusTables,
-                attributes: ['id','status'],
+                attributes: ['id', 'status'],
               },
             ]
           });
@@ -150,17 +188,17 @@ const ResearchController = {
           return;
         }
 
-        if ([3, 4, 5].includes(role_id)) {
-          
+        if ([3, 4, 5, 6, 7].includes(role_id)) {
+
           const endorsements = await Endorsements.findAll({
             attributes: ['research_id'],
-            where: { endorsement_rep_id: req.user.id }
+            where: { endorsement_rep_id: req.user.id, form_type_id: 1 },
           });
 
-          const research_ids = endorsements.map(ce=> ce.research_id)
+          const research_ids = endorsements.map(ce => ce.research_id)
 
           const checkEndorsements = await Endorsements.findAll({
-            where: {research_id: research_ids},
+            where: { research_id: research_ids, form_type_id: 1 },
             include: [
               {
                 model: User,
@@ -175,7 +213,7 @@ const ResearchController = {
             ]
           });
 
-          
+
           const role_status = checkEndorsements.map(ce => ({
             role_id: ce.User.UserAccount.role_id,
             research_id: ce.research_id,
@@ -185,22 +223,30 @@ const ResearchController = {
           let display_research_ids = []
 
           research_ids.forEach(element => {
-            let rcApproved = role_status.find(rs => rs.role_id===3 && element===rs.research_id)?.status_id === 6
-            let chairApproved = role_status.find(rs => rs.role_id===4 && element===rs.research_id)?.status_id === 6
-            let deanApproved = role_status.find(rs => rs.role_id===5 && element===rs.research_id)?.status_id === 6
+            let rcApproved = role_status.find(rs => rs.role_id === 3 && element === rs.research_id)?.status_id === 6
+            let chairApproved = role_status.find(rs => rs.role_id === 4 && element === rs.research_id)?.status_id === 6
+            let deanApproved = role_status.find(rs => rs.role_id === 5 && element === rs.research_id)?.status_id === 6
+            let crdStaffApproved = role_status.find(rs => rs.role_id === 6 && element === rs.research_id)?.status_id === 6
+            let crdDirectorApproved = role_status.find(rs => rs.role_id === 7 && element === rs.research_id)?.status_id === 6
 
-            if (role_id===5 && rcApproved && chairApproved){
+            if (role_id === 7 && crdDirectorApproved) {
               display_research_ids.push(element)
             }
-            if (role_id===4 && rcApproved){
+            if (role_id === 6 && crdStaffApproved) {
               display_research_ids.push(element)
             }
-            if (role_id===3){
+            if (role_id === 5 && rcApproved && chairApproved) {
+              display_research_ids.push(element)
+            }
+            if (role_id === 4 && rcApproved) {
+              display_research_ids.push(element)
+            }
+            if (role_id === 3) {
               display_research_ids.push(element)
             }
 
           });
-          
+
           const researches = await Research.findAll({
             attributes: ['id', 'title', 'category', 'purpose_id', 'version_number', 'research_duration', 'ethical_considerations', 'submitted_by', 'submitted_date', 'status_id'],
             include: [
@@ -215,10 +261,10 @@ const ResearchController = {
               {
                 model: Endorsements,
                 attributes: ['endorsement_rep_id', 'status_id'],
-                where: { endorsement_rep_id: req.user.id },
+                where: { endorsement_rep_id: req.user.id, form_type_id: 1 },
                 include: {
                   model: StatusTables,
-                  attributes: ['id','status']
+                  attributes: ['id', 'status']
                 }
               }
             ],
@@ -244,7 +290,7 @@ const ResearchController = {
             },
             {
               model: StatusTables,
-              attributes: ['id','status'],
+              attributes: ['id', 'status'],
             },
           ]
 
@@ -402,7 +448,7 @@ const ResearchController = {
           where: { dept_id: department.dept_id },
           include: [
             {
-              model: UserAccount, attributes: ['role_id'], where: { role_id: [3, 4, 5] },
+              model: UserAccount, attributes: ['role_id'], where: { role_id: [3, 4, 5, 6, 7] },
               include: [{ model: UserRole, attributes: ['role_desc'] },]
             },
           ]

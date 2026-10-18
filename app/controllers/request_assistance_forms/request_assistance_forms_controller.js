@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 
-const { RequestAssistanceForms, sequelize, CAssistanceFormProofs } = require("../../models");
+const { RequestAssistanceForms, sequelize, CAssistanceFormProofs, Endorsements, User, UserAccount, UserRole } = require("../../models");
 const { requestAssistanceFormsValidator } = require("../request_assistance_forms/request_assistance_forms_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 
@@ -12,6 +12,22 @@ const RequestAssistanceFormsController = {
     if (!matched) {
       res.status(PRECONDITION_FAILED).json({ message: 'RequestAssistanceForms required' });
     }
+
+    const approvingBodies = await User.findAll({
+      attributes: ['id'],
+      include: [
+        {
+          model: UserAccount, attributes: ['role_id'], where: { role_id: 7 },
+          include: [{ model: UserRole, attributes: ['role_desc'] },]
+        },
+      ]
+    });
+
+    const endorsements = approvingBodies?.map(e => ({
+      form_type_id: 2,
+      endorsement_rep_id: e.id,
+      status_id: 4,
+    }));
 
     await sequelize.transaction(async (t) => {
       try {
@@ -28,9 +44,10 @@ const RequestAssistanceFormsController = {
           created_by: req.user.id,
           created_at: new Date(Date.now()).toISOString(),
           CAssistanceFormProofs: req.body.CAssistanceFormProofs,
+          Endorsements: endorsements,
         },
           {
-            include: [CAssistanceFormProofs],
+            include: [CAssistanceFormProofs, Endorsements],
           },
           { transaction: t }
         );
@@ -44,8 +61,75 @@ const RequestAssistanceFormsController = {
   all: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
+
+        const role_id = req.user.role_id;
+        if (role_id === 7) {
+
+          const endorsements = await Endorsements.findAll({
+            attributes: ['research_id'],
+            where: { endorsement_rep_id: req.user.id, form_type_id: 2 },
+          });
+
+          const research_ids = endorsements.map(ce => ce.research_id)
+
+          const checkEndorsements = await Endorsements.findAll({
+            where: { research_id: research_ids, form_type_id: 2 },
+            include: [
+              {
+                model: User,
+                attributes: ['id',],
+                include: [
+                  {
+                    model: UserAccount,
+                    attributes: ['role_id'],
+                  }
+                ]
+              }
+            ]
+          });
+
+          const role_status = checkEndorsements.map(ce => ({
+            role_id: ce.User.UserAccount.role_id,
+            research_id: ce.research_id,
+            status_id: ce.status_id,
+          }))
+
+          let display_research_ids = []
+
+          research_ids.forEach(element => {
+            let crdDirectorApproved = role_status.find(rs => rs.role_id === 7 && element === rs.research_id)?.status_id === 6
+
+            if (role_id === 7 && crdDirectorApproved) {
+              display_research_ids.push(element)
+            }
+          });
+
+          const requestAssistanceFormss = await RequestAssistanceForms.findAll({
+            attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+            include: [
+              {
+                model: sequelize.models.CAssistanceFormProofs,
+                attributes: ['proof_id'],
+                include: [
+                  {
+                    model: sequelize.models.SAssistanceFormProofs,
+                    attributes: ['name'],
+                  },
+                ],
+              },
+              {
+                model: sequelize.models.Endorsements,
+                attributes: ['endorsement_rep_id'],
+              }
+            ],
+            where: { id: display_research_ids },
+          });
+          res.status(OK).json({ RequestAssistanceForms: requestAssistanceFormss });
+          return;
+        }
+
         const requestAssistanceFormss = await RequestAssistanceForms.findAll({
-          attributes: ['id','name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
           include: [
             {
               model: sequelize.models.CAssistanceFormProofs,
@@ -71,7 +155,7 @@ const RequestAssistanceFormsController = {
     await sequelize.transaction(async (t) => {
       try {
         const requestAssistanceFormss = await RequestAssistanceForms.findAll({
-          attributes: ['id','name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
           where: { id: req.params.id },
           include: [
             {
@@ -100,7 +184,7 @@ const RequestAssistanceFormsController = {
     await sequelize.transaction(async (t) => {
       try {
         const requestAssistanceFormss = await RequestAssistanceForms.findAll({
-          attributes: ['id','name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
           where: { created_by: req.user.id },
           include: [
             {
@@ -154,6 +238,7 @@ const RequestAssistanceFormsController = {
           acceptance_date: req.body.acceptance_date ? req.body.acceptance_date : requestAssistanceFormss.acceptance_date,
           conference_date: req.body.conference_date ? req.body.conference_date : requestAssistanceFormss.conference_date,
           RequestAssistanceFormProofs: req.body.CAssistanceFormProofs ? req.body.CAssistanceFormProofs : requestAssistanceFormss.RequestAssistanceFormProofs,
+          // Endorsements: req.body.Endorsements ? req.body.Endorsements : requestAssistanceFormss.Endorsements,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
         },

@@ -14,6 +14,8 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'progress',
         },
         {
           from_id: 3,
@@ -23,6 +25,8 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'progress',
         },
 
         {
@@ -33,6 +37,8 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'revert',
         },
 
         {
@@ -43,6 +49,8 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'return',
         },
 
         {
@@ -53,6 +61,8 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'progress',
         },
 
         {
@@ -63,16 +73,20 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'progress',
         },
 
         {
           from_id: 6,
           action: 1,
-          to_id: 8,
+          to_id: 7,
           created_at: new Date(),
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'progress',
         },
 
         {
@@ -83,6 +97,8 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'revert',
         },
 
         {
@@ -93,6 +109,20 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'return',
+        },
+
+        {
+          from_id: 7,
+          action: 1,
+          to_id: 8,
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+          form_type_id: 1,
+          action_type: 'progress',
         },
 
         {
@@ -103,6 +133,80 @@ module.exports = {
           created_by: 1,
           updated_at: new Date(),
           updated_by: 1,
+          form_type_id: 1,
+          action_type: 'progress',
+        },
+
+        {
+          from_id: 2,
+          action: 1,
+          to_id: 7,
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+          form_type_id: 2,
+          action_type: 'progress',
+        },
+
+        {
+          from_id: 7,
+          action: 2,
+          to_id: 2,
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+          form_type_id: 2,
+          action_type: 'revert',
+        },
+
+        {
+          from_id: 2,
+          action: 3,
+          to_id: 7,
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+          form_type_id: 2,
+          action_type: 'return',
+        },
+        
+        {
+          from_id: 2,
+          action: 1,
+          to_id: 7,
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+          form_type_id: 3,
+          action_type: 'progress',
+        },
+
+        {
+          from_id: 7,
+          action: 2,
+          to_id: 2,
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+          form_type_id: 3,
+          action_type: 'revert',
+        },
+
+        {
+          from_id: 2,
+          action: 3,
+          to_id: 7,
+          created_at: new Date(),
+          created_by: 1,
+          updated_at: new Date(),
+          updated_by: 1,
+          form_type_id: 3,
+          action_type: 'return',
         },
 
 
