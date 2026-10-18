@@ -209,13 +209,23 @@ const EndorsementsController = {
   updateByResearchUser: async (req, res) => {
     await sequelize.transaction(async (t) => {
       try {
+
+        function canBeInteger(val) {
+          // Trim strings to handle whitespace cleanly
+          const cleaned = typeof val === 'string' ? val.trim() : val;
+          return Number.isInteger(Number(cleaned));
+        }
+
+        console.log("req.params.form_type_id", req.params.form_type_id);
+        const formTypeId = canBeInteger(req.params.form_type_id) ? req.params.form_type_id : 1;
+
         const endorsementss = await Endorsements.findOne(
           {
             where: {
               research_id: req.params.research_id,
               // endorsement_rep_id: req.params.user_account_id
               endorsement_rep_id: req.user.id,
-              form_type_id: req.params.form_type_id ? req.params.form_type_id : 1
+              form_type_id: formTypeId
             },
           },
         );
