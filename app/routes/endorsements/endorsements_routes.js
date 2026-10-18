@@ -48,6 +48,39 @@ router.post('/create', verify_user_account, EndorsementsController.create)
  *                $ref: '#/components/schemas/EndorsementssResponse'
 */
 router.get('/all', verify_user_account, EndorsementsController.all)
+
+/**
+ *  @openapi
+ *  /api/v1/endorsements/formtype/{form_type_id}/research/{research_id}:
+ *    get:
+ *      tags: 
+ *        - Endorsements
+ *      description: GET Specific Endorsements by Research Id and Form Type API.
+ *      summary: Get Specific Endorsements by Research ID and Form Type
+ *      security: 
+ *        - bearerAuth: []
+ *      parameters:
+ *        - in: path
+ *          name: research_id
+ *          schema:
+ *           type: integer
+ *          required: true
+ *        - in: path
+ *          name: form_type_id
+ *          schema:
+ *           type: integer
+ *          required: true
+ *      responses:
+ *        200:
+ *          description: Ok
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/EndorsementsResponse'
+ *      
+*/
+router.get('/formtype/:form_type_id/research/:research_id', verify_user_account, EndorsementsController.getByResearchIdFormType)
+
 /**
  *  @openapi
  *  /api/v1/endorsements/research/{research_id}:
@@ -102,7 +135,7 @@ router.get('/research/:research_id', verify_user_account, EndorsementsController
 router.get('/:id', verify_user_account, EndorsementsController.get)
 /**
  * @openapi
- * /api/v1/endorsements/status/{research_id}:
+ * /api/v1/endorsements/status/{research_id}/{form_type_id}:
  *   put:
  *     tags:
  *       - Endorsements
@@ -123,6 +156,10 @@ router.get('/:id', verify_user_account, EndorsementsController.get)
  *         schema:
  *          type: integer
  *         required: true
+ *       - in: path
+ *         name: form_type_id
+ *         schema:
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -136,7 +173,7 @@ router.get('/:id', verify_user_account, EndorsementsController.get)
  *                 type: string
  * 
  */
-router.put('/status/:research_id', verify_user_account, EndorsementsController.updateByResearchUser)
+router.put('/status/:research_id/:form_type_id', verify_user_account, EndorsementsController.updateByResearchUser)
 /**
  * @openapi
  * /api/v1/endorsements/{id}:

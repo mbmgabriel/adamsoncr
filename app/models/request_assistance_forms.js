@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       models.RequestAssistanceForms.belongsTo(models.User, {
         foreignKey: "created_by",
       })
+      models.RequestAssistanceForms.hasMany(models.Endorsements, {
+        foreignKey: "research_id",
+      })
     }
   }
   RequestAssistanceForms.init({
