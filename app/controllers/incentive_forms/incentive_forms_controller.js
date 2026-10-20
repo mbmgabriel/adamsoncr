@@ -108,27 +108,37 @@ const IncentiveFormsController = {
                         }
                     });
 
-                    const requestAssistanceFormss = await RequestAssistanceForms.findAll({
-                        attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+                    const incentiveFormss = await IncentiveForms.findAll({
+                        attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
                         include: [
                             {
-                                model: sequelize.models.CAssistanceFormProofs,
-                                attributes: ['proof_id'],
+                                model: sequelize.models.SIncentiveTypes,
+                                attributes: ['name'],
+                            },
+                            {
+                                model: sequelize.models.SPeerReviewProof,
+                                attributes: ['name'],
+                            },
+                            {
+                                model: sequelize.models.CAttachmentInfos,
+                                attributes: ['attachment_file'],
                                 include: [
                                     {
-                                        model: sequelize.models.SAssistanceFormProofs,
+                                        model: sequelize.models.SAttachmentInfos,
                                         attributes: ['name'],
-                                    },
-                                ],
+                                    }
+                                ]
                             },
                             {
                                 model: sequelize.models.Endorsements,
-                                attributes: ['endorsement_rep_id'],
+                                attributes: ['endorsement_rep_id', 'status_id', 'form_type_id'],
+                                where: { form_type_id: 3 },
+                                // limit: 1,
                             }
                         ],
                         where: { id: display_research_ids },
                     });
-                    res.status(OK).json({ RequestAssistanceForms: requestAssistanceFormss });
+                    res.status(OK).json({ IncentiveForms: incentiveFormss });
                     return;
                 }
 
@@ -152,6 +162,11 @@ const IncentiveFormsController = {
                                     attributes: ['name'],
                                 }
                             ]
+                        },
+                        {
+                            model: sequelize.models.Endorsements,
+                            attributes: ['endorsement_rep_id', 'status_id', 'form_type_id'],
+                            where: { form_type_id: 3 },
                         }
                     ],
                 });
