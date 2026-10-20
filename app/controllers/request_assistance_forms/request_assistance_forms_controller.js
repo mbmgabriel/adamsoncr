@@ -119,7 +119,8 @@ const RequestAssistanceFormsController = {
               },
               {
                 model: sequelize.models.Endorsements,
-                attributes: ['endorsement_rep_id'],
+                attributes: ['endorsement_rep_id', 'status_id', 'form_type_id'],
+                where: { form_type_id: 2 },
               }
             ],
             where: { id: display_research_ids },
@@ -139,6 +140,11 @@ const RequestAssistanceFormsController = {
                   model: sequelize.models.SAssistanceFormProofs,
                   attributes: ['name'],
                 },
+                {
+                  model: sequelize.models.Endorsements,
+                  attributes: ['endorsement_rep_id', 'status_id','form_type_id'],
+                  where: { form_type_id: 3 },
+                }
               ],
             },
           ],
