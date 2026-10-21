@@ -43,6 +43,7 @@ const RequestAssistanceFormsController = {
           conference_date: req.body.conference_date,
           created_by: req.user.id,
           created_at: new Date(Date.now()).toISOString(),
+          status_id: 1,
           CAssistanceFormProofs: req.body.CAssistanceFormProofs,
           Endorsements: endorsements,
         },
@@ -130,7 +131,7 @@ const RequestAssistanceFormsController = {
         }
 
         const requestAssistanceFormss = await RequestAssistanceForms.findAll({
-          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id'], 'created_at', 'status_id'],
           include: [
             {
               model: sequelize.models.CAssistanceFormProofs,
@@ -161,7 +162,7 @@ const RequestAssistanceFormsController = {
     await sequelize.transaction(async (t) => {
       try {
         const requestAssistanceFormss = await RequestAssistanceForms.findAll({
-          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id'], 'created_at', 'status_id'],
           where: { id: req.params.id },
           include: [
             {
@@ -190,7 +191,7 @@ const RequestAssistanceFormsController = {
     await sequelize.transaction(async (t) => {
       try {
         const requestAssistanceFormss = await RequestAssistanceForms.findAll({
-          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+          attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id'], 'created_at', 'status_id'],
           where: { created_by: req.user.id },
           include: [
             {

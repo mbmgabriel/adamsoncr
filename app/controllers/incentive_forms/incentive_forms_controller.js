@@ -109,7 +109,7 @@ const IncentiveFormsController = {
                     });
 
                     const incentiveFormss = await IncentiveForms.findAll({
-                        attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
+                        attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id'], 'created_at', 'status_id'],
                         include: [
                             {
                                 model: sequelize.models.SIncentiveTypes,
@@ -182,7 +182,7 @@ const IncentiveFormsController = {
         await sequelize.transaction(async (t) => {
             try {
                 const incentiveFormss = await IncentiveForms.findAll({
-                    attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
+                    attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id'], 'created_at', 'status_id'],
                     where: { id: req.params.id },
                     include: [
                         {
@@ -219,7 +219,7 @@ const IncentiveFormsController = {
         await sequelize.transaction(async (t) => {
             try {
                 const incentiveFormss = await IncentiveForms.findAll({
-                    attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id']],
+                    attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id'], 'created_at', 'status_id'],
                     where: { created_by: req.user.id },
                     include: [
                         {
