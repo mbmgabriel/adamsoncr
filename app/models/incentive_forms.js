@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     created_by: DataTypes.INTEGER,
     updated_by: DataTypes.INTEGER,
     deleted_by: DataTypes.INTEGER,
+    status_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'IncentiveForms',
