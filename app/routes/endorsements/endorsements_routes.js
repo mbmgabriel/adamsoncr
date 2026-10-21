@@ -174,6 +174,80 @@ router.get('/:id', verify_user_account, EndorsementsController.get)
  * 
  */
 router.put('/status/:research_id/:form_type_id', verify_user_account, EndorsementsController.updateByResearchUser)
+
+/**
+ * @openapi
+ * /api/v1/endorsements/endorse/{research_id}:
+ *   put:
+ *     tags:
+ *       - Endorsements
+ *     description: Endorse Endorsements by Research ID (ONLY RESEARCH)
+ *     summary: Endorse Research (ONLY RESEARCH)
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/EndorsementsResponse'
+ *     parameters:
+ *       - in: path
+ *         name: research_id
+ *         schema:
+ *          type: integer
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               remarks:
+ *                 type: string
+ * 
+ */
+router.put('/endorse/:research_id', verify_user_account, EndorsementsController.endorseResearch)
+
+/**
+ * @openapi
+ * /api/v1/endorsements/reevaluate/{research_id}:
+ *   put:
+ *     tags:
+ *       - Endorsements
+ *     description: Send back Endorsement by Research ID (ONLY RESEARCH)
+ *     summary: Research Reevaluate (ONLY RESEARCH)
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/EndorsementsResponse'
+ *     parameters:
+ *       - in: path
+ *         name: research_id
+ *         schema:
+ *          type: integer
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               remarks:
+ *                 type: string
+ * 
+ */
+router.put('/reevaluate/:research_id', verify_user_account, EndorsementsController.reevaluateResearch)
+
+
 /**
  * @openapi
  * /api/v1/endorsements/{id}:
