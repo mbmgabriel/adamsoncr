@@ -108,7 +108,7 @@ const RequestAssistanceFormsController = {
           // });
 
           const requestAssistanceFormss = await RequestAssistanceForms.findAll({
-            attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
+            attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id'], 'created_at', 'status_id'],
             include: [
               {
                 model: sequelize.models.CAssistanceFormProofs,
