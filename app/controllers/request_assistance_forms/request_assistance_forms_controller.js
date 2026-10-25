@@ -66,15 +66,15 @@ const RequestAssistanceFormsController = {
         const role_id = req.user.role_id;
         if (role_id === 7) {
 
-          const endorsements = await Endorsements.findAll({
-            attributes: ['research_id'],
-            where: { endorsement_rep_id: req.user.id, form_type_id: 2 },
-          });
+          // const endorsements = await Endorsements.findAll({
+          //   attributes: ['research_id'],
+          //   where: { endorsement_rep_id: req.user.id, form_type_id: 2 },
+          // });
 
-          const research_ids = endorsements.map(ce => ce.research_id)
+          // const research_ids = endorsements.map(ce => ce.research_id)
 
           const checkEndorsements = await Endorsements.findAll({
-            where: { research_id: research_ids, form_type_id: 2 },
+            where: { endorsement_rep_id: req.user.id, form_type_id: 2 },
             include: [
               {
                 model: User,
@@ -89,21 +89,23 @@ const RequestAssistanceFormsController = {
             ]
           });
 
+          const research_ids = checkEndorsements.map(ce => ce.research_id)
+
           const role_status = checkEndorsements.map(ce => ({
             role_id: ce.User.UserAccount.role_id,
             research_id: ce.research_id,
             status_id: ce.status_id,
           }))
 
-          let display_research_ids = []
+          // let display_research_ids = []
 
-          research_ids.forEach(element => {
-            let crdDirectorApproved = role_status.find(rs => rs.role_id === 7 && element === rs.research_id)?.status_id === 6
+          // research_ids.forEach(element => {
+          //   let crdDirectorApproved = role_status.find(rs => rs.role_id === 7 && element === rs.research_id)?.status_id === 6
 
-            if (role_id === 7 && crdDirectorApproved) {
-              display_research_ids.push(element)
-            }
-          });
+          //   if (role_id === 4 && crdDirectorApproved) {
+          //     display_research_ids.push(element)
+          //   }
+          // });
 
           const requestAssistanceFormss = await RequestAssistanceForms.findAll({
             attributes: ['id', 'name_of_presenter', 'email_address', 'contact_number', 'conference_title', 'research_paper_title', 'conference_link', 'acceptance_date', 'conference_date', ['created_by', 'user_account_id']],
@@ -124,7 +126,8 @@ const RequestAssistanceFormsController = {
                 where: { form_type_id: 2 },
               }
             ],
-            where: { id: display_research_ids },
+            // where: { id: display_research_ids },
+            where: {id: research_ids}
           });
           res.status(OK).json({ RequestAssistanceForms: requestAssistanceFormss });
           return;

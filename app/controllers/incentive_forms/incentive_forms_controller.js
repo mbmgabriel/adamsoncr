@@ -69,15 +69,15 @@ const IncentiveFormsController = {
                 const role_id = req.user.role_id;
                 if (role_id === 7) {
 
-                    const endorsements = await Endorsements.findAll({
-                        attributes: ['research_id'],
-                        where: { endorsement_rep_id: req.user.id, form_type_id: 3 },
-                    });
+                    // const endorsements = await Endorsements.findAll({
+                    //     attributes: ['research_id'],
+                    //     where: { endorsement_rep_id: req.user.id, form_type_id: 3 },
+                    // });
 
-                    const research_ids = endorsements.map(ce => ce.research_id)
+                    // const research_ids = endorsements.map(ce => ce.research_id)
 
                     const checkEndorsements = await Endorsements.findAll({
-                        where: { research_id: research_ids, form_type_id: 3 },
+                        where: { endorsement_rep_id: req.user.id, form_type_id: 3 },
                         include: [
                             {
                                 model: User,
@@ -92,21 +92,23 @@ const IncentiveFormsController = {
                         ]
                     });
 
+                    const research_ids = checkEndorsements.map(ce => ce.research_id)
+
                     const role_status = checkEndorsements.map(ce => ({
                         role_id: ce.User.UserAccount.role_id,
                         research_id: ce.research_id,
                         status_id: ce.status_id,
                     }))
 
-                    let display_research_ids = []
+                    // let display_research_ids = []
 
-                    research_ids.forEach(element => {
-                        let crdDirectorApproved = role_status.find(rs => rs.role_id === 7 && element === rs.research_id)?.status_id === 6
+                    // research_ids.forEach(element => {
+                    //     let crdDirectorApproved = role_status.find(rs => rs.role_id === 7 && element === rs.research_id)?.status_id === 6
 
-                        if (role_id === 7 && crdDirectorApproved) {
-                            display_research_ids.push(element)
-                        }
-                    });
+                    //     if (role_id === 7 && crdDirectorApproved) {
+                    //         display_research_ids.push(element)
+                    //     }
+                    // });
 
                     const incentiveFormss = await IncentiveForms.findAll({
                         attributes: ['id', 'name_of_authors', 'email_address', 'contact_number', 'incentive_type_id', 'submission_date', 'publisher_info', 'title_of_work', 'publication_date', 'citation_date', 'citation_no', 'isbn', 'peer_review_proof_id', ['created_by', 'user_account_id'], 'created_at', 'status_id'],
@@ -136,7 +138,8 @@ const IncentiveFormsController = {
                                 // limit: 1,
                             }
                         ],
-                        where: { id: display_research_ids },
+                        // where: { id: display_research_ids },
+                        where: {id: research_ids}
                     });
                     res.status(OK).json({ IncentiveForms: incentiveFormss });
                     return;
