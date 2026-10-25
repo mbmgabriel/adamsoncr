@@ -289,6 +289,7 @@ const IncentiveFormsController = {
                     peer_review_proof_id: req.body.peer_review_proof_id ? req.body.peer_review_proof_id : incentiveFormss.peer_review_proof_id,
                     updated_by: req.user.id,
                     updated_at: new Date(Date.now()).toISOString(),
+                    status_id: req.body.status_id ? req.body.status_id : requestAssistanceFormss.status_id,
                 });
 
                 res.status(OK).json({

@@ -251,6 +251,7 @@ const RequestAssistanceFormsController = {
           // Endorsements: req.body.Endorsements ? req.body.Endorsements : requestAssistanceFormss.Endorsements,
           updated_by: req.user.id,
           updated_at: new Date(Date.now()).toISOString(),
+          status_id: req.body.status_id ? req.body.status_id : requestAssistanceFormss.status_id,
         },
           { include: [CAssistanceFormProofs] }
         );
