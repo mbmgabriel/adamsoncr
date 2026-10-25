@@ -1,6 +1,6 @@
 const { Op, where } = require("sequelize");
 
-const { Endorsements, User, UserAccount, UserRole, StatusTables, FormTypes, sequelize, Research } = require("../../models");
+const { Endorsements, User, UserAccount, UserRole, StatusTables, FormTypes, sequelize, Research, RequestAssRequestAssistanceForms, IncentiveForms } = require("../../models");
 const { endorsementsValidator } = require("../endorsements/endorsements_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 
@@ -248,8 +248,8 @@ const EndorsementsController = {
           updated_at: new Date(Date.now()).toISOString(),
         });
 
-        if (req.params.form_type_id == 2 || req.params.form_type_id == 3) { // Request and Incentive Forms
-          const researchs = await Research.findOne(
+        if (req.params.form_type_id == 2) { // Request and Incentive Forms
+          const form = await RequestAssRequestAssistanceForms.findOne(
             {
               where: {
                 id: req.params.research_id,
@@ -257,14 +257,37 @@ const EndorsementsController = {
             },
           );
 
-          if (!researchs) {
+          if (!form) {
             res.status(NOT_FOUND).json({
               Message: `No matching Research with id ${req.params.id}`,
             });
             return;
           }
 
-          await researchs.update({
+          await form.update({
+            status_id: req.body.status_id,
+            updated_by: req.user.id,
+            updated_at: new Date(Date.now()).toISOString(),
+          });
+        }
+
+        if(req.params.form_type_id == 3){
+          const form = await IncentiveForms.findOne(
+            {
+              where: {
+                id: req.params.research_id,
+              },
+            },
+          );
+
+          if (!form) {
+            res.status(NOT_FOUND).json({
+              Message: `No matching Research with id ${req.params.id}`,
+            });
+            return;
+          }
+
+          await form.update({
             status_id: req.body.status_id,
             updated_by: req.user.id,
             updated_at: new Date(Date.now()).toISOString(),
