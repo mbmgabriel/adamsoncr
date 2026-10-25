@@ -17,7 +17,8 @@ const app = express();
 app.set('views', path.join(__dirname, 'app/views'));
 app.set('view engine', 'pug');
 
-app.use(logger('dev'));
+const isProduction = process.env.NODE_ENV === 'production';
+app.use(logger(isProduction ? 'combined' : 'dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -25,7 +26,10 @@ app.use(bodyParser.json());
 
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use(cors());
+if (isProduction && !process.env.FRONTEND_URL) {
+  throw new Error('FRONTEND_URL must be set to the public frontend origin in production');
+}
+app.use(cors(isProduction ? { origin: process.env.FRONTEND_URL } : {}));
 
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -69,7 +73,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.json({ error: err });
+  res.json({ error: isProduction ? { message: err.status && err.status < 500 ? err.message : 'Internal server error' } : err });
 });
 
 // app.use(express.static(path.join(__dirname, '/storage')));

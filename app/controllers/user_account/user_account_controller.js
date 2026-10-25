@@ -176,43 +176,41 @@ const UserAccountController = {
     });
   },
   get: async (req, res) => {
-    await sequelize.transaction(async (t) => {
-      try {
-        const userAccounts = await UserAccount.findOne({
-          attributes: ['id', 'username', 'role_id', 'email', 'profile_image', 'created_by', 'created_at'],
-          where: {id: req.params.id},
-          include: [
-            {
-              model: User,
-              attributes: ['last_name','first_name','middle_name', 'contact_number'],
-              include: [
-                {
-                  model: Departments,
-                  attributes: ['id','dept_name']
-                }
-              ]
-            },
-            {
-              model: UserRole,
-              attributes: ['id','role_name', 'role_desc']
-            },
-          ],
+    try {
+      const userAccounts = await UserAccount.findOne({
+        attributes: ['id', 'username', 'role_id', 'email', 'profile_image', 'created_by', 'created_at'],
+        where: {id: req.params.id},
+        include: [
+          {
+            model: User,
+            attributes: ['last_name','first_name','middle_name', 'contact_number'],
+            include: [
+              {
+                model: Departments,
+                attributes: ['id','dept_name']
+              }
+            ]
+          },
+          {
+            model: UserRole,
+            attributes: ['id','role_name', 'role_desc']
+          },
+        ],
+      });
+
+      if (!userAccounts) {
+        res.status(NOT_FOUND).json({
+          message: `No matching record with ${req.params.id}`,
         });
-
-        if (!userAccounts) {
-          res.status(NOT_FOUND).json({
-            message: `No matching record with ${req.params.id}`,
-          });
-          return;
-        }
-
-        res.status(OK).json(userAccounts);
-        return;
-      } catch (error) {
-        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
         return;
       }
-    });
+
+      res.status(OK).json(userAccounts);
+      return;
+    } catch (error) {
+      res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+      return;
+    }
   },
   getWithFilter: async (req, res) => {
 

@@ -31,16 +31,14 @@ const DepartmentsController = {
   },
 
   all: async (req, res) => {
-    await sequelize.transaction(async (t) => {
-      try {
-        const departmentss = await Departments.findAll({
-          attributes: ['dept_name','dept_initials','dept_desc'],
-        });
-        res.status(OK).json({Departments: departmentss});
-      } catch (error) {
-        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
-      }
-    });
+    try {
+      const departmentss = await Departments.findAll({
+        attributes: ['dept_name','dept_initials','dept_desc'],
+      });
+      res.status(OK).json({Departments: departmentss});
+    } catch (error) {
+      res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   },
 
   // where: {id: req.params.id},

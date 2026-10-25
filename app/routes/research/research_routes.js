@@ -3,6 +3,15 @@ const router = express.Router()
 
 const { ResearchController } = require('../../controllers/research/research_controller')
 const verify_user_account = require('../../middlewares/auth/verify_user_account')
+const { ResearchWorkflowController: workflow } = require('../../controllers/research/research_workflow_controller');
+
+router.get('/urb-members', verify_user_account, workflow.members);
+router.get('/:id/workflow', verify_user_account, workflow.get);
+router.put('/:id/review', verify_user_account, workflow.review);
+router.put('/:id/urb-members', verify_user_account, workflow.assign);
+router.put('/:id/complete', verify_user_account, workflow.complete);
+router.put('/:id/resubmit', verify_user_account, workflow.resubmit);
+
 
 
 

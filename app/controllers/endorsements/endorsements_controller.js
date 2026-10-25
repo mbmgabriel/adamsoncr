@@ -7,6 +7,7 @@ const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = r
 
 const EndorsementsController = {
   create: async (req, res) => {
+    if (Number(req.body.form_type_id) === 1) return res.status(403).json({ message: 'Research reviewers are managed by the research workflow.' });
     const matched = endorsementsValidator(req.body, res).validate()
 
     if (!matched) {
@@ -44,6 +45,7 @@ const EndorsementsController = {
             // 'status',
             'status_id',
             'remarks',
+            'id', 'created_at', 'updated_at',
             'form_type_id'
           ],
           include: [
@@ -84,6 +86,7 @@ const EndorsementsController = {
             // 'status',
             'status_id',
             'remarks',
+            'id', 'created_at', 'updated_at',
             'form_type_id'
           ],
           include: [
@@ -130,6 +133,7 @@ const EndorsementsController = {
             // 'status',
             'status_id',
             'remarks',
+            'id', 'created_at', 'updated_at',
             'form_type_id'
           ],
           include: [
@@ -175,6 +179,7 @@ const EndorsementsController = {
             // 'status',
             'status_id',
             'remarks',
+            'id', 'created_at', 'updated_at',
             'form_type_id'
           ],
           include: [
@@ -207,6 +212,9 @@ const EndorsementsController = {
   },
 
   updateByResearchUser: async (req, res) => {
+    if (Number(req.params.form_type_id) === 1) {
+      return require('../research/research_workflow_controller').ResearchWorkflowController.review(req, res);
+    }
     await sequelize.transaction(async (t) => {
       try {
 
@@ -307,138 +315,13 @@ const EndorsementsController = {
   },
 
   endorseResearch: async (req, res) => {
-    await sequelize.transaction(async (t) => {
-      try {
-
-        const endorsementss = await Endorsements.findOne(
-          {
-            where: {
-              research_id: req.params.research_id,
-              // endorsement_rep_id: req.params.user_account_id
-              endorsement_rep_id: req.user.id,
-              form_type_id: 1
-            },
-            include: [
-              {
-                model: User,
-                attributes: ['first_name', 'middle_name', 'last_name', 'dept_id'],
-                include: [
-                  {
-                    model: UserAccount,
-                    attributes: ['role_id'],
-                    include: { model: UserRole, attributes: ['role_desc'] }
-                  },
-                ]
-              },
-            ]
-          },
-        );
-
-        const role_id = endorsementss.User.UserAccount.role_id
-
-        if (!endorsementss) {
-          res.status(NOT_FOUND).json({
-            Message: `No matching Endorsements entry with Research id ${req.params.research_id} or for User ${req.user.id}`,
-          });
-          return;
-        }
-
-        await endorsementss.update({
-          status_id: 6,
-          remarks: req.body.remarks,
-          updated_by: req.user.id,
-          updated_at: new Date(Date.now()).toISOString(),
-        });
-
-        let researchIsDone = false;
-        //if Director, move Research Status to Completed
-        if (role_id == 7) {
-          const research = await Research.findOne({ where: { id: req.params.research_id } });
-          await research.update({ status_id: 2 })
-          researchIsDone = true
-        }
-
-        res.status(OK).json({
-          ResearchCompleted: researchIsDone,
-          Message: "Approving entry updated.",
-          Endorsements: endorsementss
-        });
-        return;
-      } catch (error) {
-        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
-        return;
-      }
-    });
+    req.body.action = 'endorse';
+    return require('../research/research_workflow_controller').ResearchWorkflowController.review(req, res);
   },
 
   reevaluateResearch: async (req, res) => {
-    await sequelize.transaction(async (t) => {
-      try {
-
-        const endorsementss = await Endorsements.findOne(
-          {
-            where: {
-              research_id: req.params.research_id,
-              // endorsement_rep_id: req.params.user_account_id
-              endorsement_rep_id: req.user.id,
-              form_type_id: 1
-            },
-            include: [
-              {
-                model: User,
-                attributes: ['first_name', 'middle_name', 'last_name', 'dept_id'],
-                include: [
-                  {
-                    model: UserAccount,
-                    attributes: ['role_id'],
-                    include: { model: UserRole, attributes: ['role_desc'] }
-                  },
-                ]
-              },
-            ]
-          },
-        );
-
-        const role_id = endorsementss.User.UserAccount.role_id;
-        const endorsement_status = endorsementss.status_id;
-
-        if (role_id !== 2) {
-          res.status(PRECONDITION_FAILED).json({
-            Message: `User is not Allowed this action: Invalid role`,
-          });
-          return;
-        }
-
-        if (!endorsementss) {
-          res.status(NOT_FOUND).json({
-            Message: `No matching Endorsements entry with Research id ${req.params.research_id} or for User ${req.user.id}`,
-          });
-          return;
-        }
-
-        // move endorsement back to Not yet Reviewed
-        await endorsementss.update({
-          status_id: 1,
-          remarks: req.body.remarks,
-          updated_by: req.user.id,
-          updated_at: new Date(Date.now()).toISOString(),
-        });
-
-        //move Research Status to Reevaluate
-
-        const research = await Research.findOne({ where: { id: req.params.research_id } });
-        await research.update({ status_id: 5 })
-
-        res.status(OK).json({
-          Message: "Research sent back to reevaluation.",
-          Endorsements: endorsementss
-        });
-        return;
-      } catch (error) {
-        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
-        return;
-      }
-    });
+    req.body.action = 'request_revision';
+    return require('../research/research_workflow_controller').ResearchWorkflowController.review(req, res);
   },
 
   update: async (req, res) => {
@@ -459,6 +342,8 @@ const EndorsementsController = {
           });
           return;
         }
+
+        if (Number(endorsementss.form_type_id) === 1) return res.status(403).json({ message: 'Research endorsements are managed by the research workflow.' });
 
         await endorsementss.update({
           research_id: req.body.research_id,
@@ -502,6 +387,8 @@ const EndorsementsController = {
 
           return;
         }
+        if (Number(endorsementss.form_type_id) === 1) return res.status(403).json({ message: 'Research endorsements are managed by the research workflow.' });
+
         await endorsementss.destroy({
           force: false,
           deleted_by: req.user.id,

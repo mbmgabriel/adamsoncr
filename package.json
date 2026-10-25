@@ -4,6 +4,12 @@
     "private": true,
     "scripts": {
         "start": "nodemon ./bin/www",
+        "start:production": "NODE_ENV=production node ./bin/www",
+        "db:local:start": "docker compose -f compose.local.yml up -d --wait",
+        "db:migrate": "sequelize db:migrate",
+        "db:local:seed": "node scripts/seed-local.js",
+        "test:research": "node --test tests/*.test.js",
+        "test:research:local": "node tests/research-workflow.integration.js",
         "console": "node --experimental-repl-await bin/console"
     },
     "dependencies": {

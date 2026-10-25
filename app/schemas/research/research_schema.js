@@ -23,6 +23,9 @@
  *           type: string
  *         submitted_date:
  *           type: string
+ *           readOnly: true
+ *           description: Server-recorded submission timestamp, preserved during updates.
+ *           format: date-time
  *         status_id:
  *           type: integer
  *           default: 1
@@ -93,7 +96,9 @@
  *           type: string
  *         submitted_date:
  *           type: string
- *           format: date
+ *           readOnly: true
+ *           description: Server-recorded submission timestamp, preserved during updates.
+ *           format: date-time
  *         status_id:
  *           type: integer
  *           default: 1

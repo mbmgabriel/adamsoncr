@@ -30,16 +30,14 @@ const DocumentTypesController = {
   },
 
   all: async (req, res) => {
-    await sequelize.transaction(async (t) => {
-      try {
-        const documentTypess = await DocumentTypes.findAll({
-          attributes: ['id','document_name'],
-        });
-        res.status(OK).json({DocumentTypes: documentTypess});
-      } catch (error) {
-        res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
-      }
-    });
+    try {
+      const documentTypess = await DocumentTypes.findAll({
+        attributes: ['id','document_name'],
+      });
+      res.status(OK).json({DocumentTypes: documentTypess});
+    } catch (error) {
+      res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   },
 
   // where: {id: req.params.id},
