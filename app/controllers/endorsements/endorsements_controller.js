@@ -248,6 +248,29 @@ const EndorsementsController = {
           updated_at: new Date(Date.now()).toISOString(),
         });
 
+        if (req.params.form_type_id == 2 || req.params.form_type_id == 3) { // Request and Incentive Forms
+          const researchs = await Research.findOne(
+            {
+              where: {
+                id: req.params.research_id,
+              },
+            },
+          );
+
+          if (!researchs) {
+            res.status(NOT_FOUND).json({
+              Message: `No matching Research with id ${req.params.id}`,
+            });
+            return;
+          }
+
+          await researchs.update({
+            status_id: req.body.status_id,
+            updated_by: req.user.id,
+            updated_at: new Date(Date.now()).toISOString(),
+          });
+        }
+
         res.status(OK).json({
           Endorsements: endorsementss,
           Message: "Approving entry updated.",
@@ -306,16 +329,16 @@ const EndorsementsController = {
 
         let researchIsDone = false;
         //if Director, move Research Status to Completed
-        if (role_id==7){ 
-          const research = await Research.findOne({where: {id: req.params.research_id}});
-          await research.update({status_id: 2})
-          researchIsDone=true
+        if (role_id == 7) {
+          const research = await Research.findOne({ where: { id: req.params.research_id } });
+          await research.update({ status_id: 2 })
+          researchIsDone = true
         }
 
         res.status(OK).json({
           ResearchCompleted: researchIsDone,
           Message: "Approving entry updated.",
-          Endorsements: endorsementss          
+          Endorsements: endorsementss
         });
         return;
       } catch (error) {
@@ -356,7 +379,7 @@ const EndorsementsController = {
         const role_id = endorsementss.User.UserAccount.role_id;
         const endorsement_status = endorsementss.status_id;
 
-        if (role_id !== 2){
+        if (role_id !== 2) {
           res.status(PRECONDITION_FAILED).json({
             Message: `User is not Allowed this action: Invalid role`,
           });
@@ -379,13 +402,13 @@ const EndorsementsController = {
         });
 
         //move Research Status to Reevaluate
-        
-        const research = await Research.findOne({where: {id: req.params.research_id}});
-        await research.update({status_id: 5})
+
+        const research = await Research.findOne({ where: { id: req.params.research_id } });
+        await research.update({ status_id: 5 })
 
         res.status(OK).json({
           Message: "Research sent back to reevaluation.",
-          Endorsements: endorsementss          
+          Endorsements: endorsementss
         });
         return;
       } catch (error) {
