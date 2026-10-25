@@ -26,6 +26,7 @@ const { FormTypesRoutes } = require("./form_types/form_types_routes")
 
 var router = express.Router();
 
+router.use("/notifications", require("./notifications/notifications_routes"));
 router.use("/user", UserAccountRoutes);
 router.use("/roles", UserRoleRoutes);
 router.use("/research", ResearchRoutes);
@@ -41,10 +42,10 @@ router.use("/departments", DepartmentsRoutes)
 router.use("/budget_breakdown_details", BudgetBreakdownDetailsRoutes)
 router.use("/status_tables", StatusTablesRoutes)
 router.use("/processes", ProcessesRoutes)
-router.use("/request-assistance-forms", RequestAssistanceFormsRoutes)
+router.use("/request-assistance-forms", require("./notifications/form_routes")("assistance", require("../controllers/request_assistance_forms/request_assistance_forms_controller").RequestAssistanceFormsController))
 router.use("/c-assistance-form-proofs", CAssistanceFormProofsRoutes)
 router.use("/s-assistance-form-proofs", SAssistanceFormProofsRoutes)
-router.use("/incentive-forms", IncentiveFormsRoutes)
+router.use("/incentive-forms", require("./notifications/form_routes")("incentive", require("../controllers/incentive_forms/incentive_forms_controller").IncentiveFormsController))
 router.use("/c-attachment-infos", CAttachmentInfosRoutes)
 router.use("/s-attachment-infos", SAttachmentInfosRoutes)
 router.use("/s-incentive-types", SIncentiveTypesRoutes)

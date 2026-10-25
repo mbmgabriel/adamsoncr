@@ -2,7 +2,7 @@
 require('dotenv').config();
 const assert = require('node:assert/strict');
 const db = require('../app/models');
-const base = 'http://localhost:3000/api/v1';
+const base = process.env.TEST_API_BASE || 'http://localhost:3000/api/v1';
 let researchId;
 let checks = 0;
 async function request(token, path, method = 'GET', body, expected = 200) {
@@ -134,6 +134,7 @@ async function main() {
 }
 main().catch(error => { console.error(error.stack); process.exitCode = 1; }).finally(async () => {
   if (researchId) {
+    await db.notifications.destroy({ where: { application_type: 'research', application_id: researchId }, force: true });
     for (const model of [db.Endorsements, db.ResearchVersions, db.ResearchInvestigators, db.BudgetBreakdowns, db.ResearchDocuments]) {
       await model.destroy({ where: { research_id: researchId } });
     }

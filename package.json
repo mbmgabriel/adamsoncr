@@ -6,6 +6,8 @@
         "start": "nodemon ./bin/www",
         "start:production": "NODE_ENV=production node ./bin/www",
         "db:local:start": "docker compose -f compose.local.yml up -d --wait",
+        "test:notifications:local": "node tests/notifications.integration.js",
+        "notifications:backfill": "node scripts/backfill-notifications.js",
         "db:migrate": "sequelize db:migrate",
         "db:local:seed": "node scripts/seed-local.js",
         "test:research": "node --test tests/*.test.js",
