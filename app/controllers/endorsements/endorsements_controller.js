@@ -1,6 +1,6 @@
 const { Op, where } = require("sequelize");
 
-const { Endorsements, User, UserAccount, UserRole, StatusTables, FormTypes, sequelize, Research, RequestAssRequestAssistanceForms, IncentiveForms } = require("../../models");
+const { Endorsements, User, UserAccount, UserRole, StatusTables, FormTypes, sequelize, Research, RequestAssistanceForms, IncentiveForms } = require("../../models");
 const { endorsementsValidator } = require("../endorsements/endorsements_validator")
 const { CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED } = require('../../constants/http/status_codes');
 
@@ -249,7 +249,7 @@ const EndorsementsController = {
         });
 
         if (req.params.form_type_id == 2) { // Request and Incentive Forms
-          const form = await RequestAssRequestAssistanceForms.findOne(
+          const form = await RequestAssistanceForms.findOne(
             {
               where: {
                 id: req.params.research_id,
