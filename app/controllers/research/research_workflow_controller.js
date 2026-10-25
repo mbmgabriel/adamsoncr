@@ -1,4 +1,5 @@
 const db = require('../../models');
+const { researchEvent } = require('../../services/notifications/service');
 const { workflow } = require('../../services/research/workflow');
 const fail = (status, message) => { const error = new Error(message); error.status = status; throw error; };
 
@@ -79,6 +80,7 @@ const ResearchWorkflowController = {
     await own.update({ status_id: action === 'request_revision' ? 5 : 6,
       remarks, updated_by: req.user.id }, { transaction });
     if (action === 'request_revision') await research.update({ status_id: 5 }, { transaction });
+    await researchEvent(research, action, req.user, transaction, remarks);
     return { message: action === 'request_revision' ? 'Returned to the researcher for revision.' :
       action === 'approve_urb' ? 'URB approval recorded.' : 'Research endorsed.',
       workflow: workflow(research, endorsements, actor.id, role) };
@@ -105,9 +107,12 @@ const ResearchWorkflowController = {
         research_id: research.id, form_type_id: 1, endorsement_rep_id: id, status_id: 4, created_by: req.user.id,
       }, { transaction });
     }
+    const assignmentsChanged = existing.length !== ids.length || ids.some(id => !existing.some(e => e.endorsement_rep_id === id));
     const staff = endorsements.find(entry => entry.endorsement_rep_id === actor.id);
-    if (Number(staff.status_id) !== 6) await staff.update({ status_id: 6, updated_by: req.user.id }, { transaction });
+    const staffChanged = Number(staff.status_id) !== 6;
+    if (staffChanged) await staff.update({ status_id: 6, updated_by: req.user.id }, { transaction });
     await research.update({ status_id: 3 }, { transaction });
+    if (assignmentsChanged || staffChanged) await researchEvent(research, assignmentsChanged ? 'assigned' : 'endorse', req.user, transaction);
     return { message: 'URB reviewers assigned. Awaiting all assigned members’ approvals.' };
   }),
   complete: run(async (req, transaction) => {
@@ -116,6 +121,7 @@ const ResearchWorkflowController = {
     const director = endorsements.find(entry => entry.endorsement_rep_id === actor.id);
     await director.update({ status_id: 2, updated_by: req.user.id }, { transaction });
     await research.update({ status_id: 2, updated_by: req.user.id }, { transaction });
+    await researchEvent(research, 'completed', req.user, transaction);
     return { message: 'Research completed.', Research: research };
   }),
   resubmit: run(async (req, transaction) => {
@@ -157,6 +163,7 @@ const ResearchWorkflowController = {
       } else if (isUrb) await entry.destroy({ transaction });
       else await entry.update({ status_id: 4, remarks: null, updated_by: req.user.id }, { transaction });
     }
+    await researchEvent(research, 'resubmitted', req.user, transaction);
     return { message: minorRevision ? 'Minor edits resubmitted to the assigned URB reviewers. Version unchanged.' :
       'Revised research resubmitted to the coordinator.', Research: research,
       workflow: workflow(research, minorRevision ? endorsements : [], actor.id, 2) };
