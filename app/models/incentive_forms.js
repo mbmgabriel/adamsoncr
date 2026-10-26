@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     created_by: DataTypes.INTEGER,
     updated_by: DataTypes.INTEGER,
     deleted_by: DataTypes.INTEGER,
+    approved_amount: DataTypes.DECIMAL(12, 2),
     status_id: DataTypes.INTEGER
   }, {
     sequelize,
