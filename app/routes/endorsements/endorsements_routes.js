@@ -106,7 +106,10 @@ router.get('/formtype/:form_type_id/research/:research_id', verify_user_account,
  *                $ref: '#/components/schemas/EndorsementsResponse'
  *      
 */
-router.get('/research/:research_id', verify_user_account, EndorsementsController.getByResearchId)
+router.get('/research/:research_id', verify_user_account, require('../../services/notifications/applications').researchAccess, (req, res) => {
+  req.params.form_type_id = 1;
+  return EndorsementsController.getByResearchIdFormType(req, res);
+})
 /**
  *  @openapi
  *  /api/v1/endorsements/{id}:
@@ -173,7 +176,7 @@ router.get('/:id', verify_user_account, EndorsementsController.get)
  *                 type: string
  * 
  */
-router.put('/status/:research_id/:form_type_id', verify_user_account, EndorsementsController.updateByResearchUser)
+router.put('/status/:research_id/:form_type_id', verify_user_account, (req, res) => Number(req.params.form_type_id) === 1 ? EndorsementsController.updateByResearchUser(req, res) : require('../../services/notifications/applications').reviewForm(req, res))
 
 /**
  * @openapi
@@ -279,7 +282,7 @@ router.put('/reevaluate/:research_id', verify_user_account, EndorsementsControll
  *             $ref: '#/components/schemas/Endorsements'
  * 
  */
-router.put('/:id', verify_user_account, EndorsementsController.update)
+router.put('/:id', verify_user_account, require('../../services/notifications/applications').reviewForm)
 /**
  * @openapi
  * /api/v1/endorsements/{id}:

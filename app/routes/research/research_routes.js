@@ -39,7 +39,7 @@ router.put('/:id/resubmit', verify_user_account, workflow.resubmit);
  *           schema:
  *             $ref: '#/components/schemas/ResearchComplete'
  */
-router.post('/full/create', verify_user_account, ResearchController.comprehensiveCreate)
+router.post('/full/create', verify_user_account, require('../../services/notifications/applications').createResearch(true))
 /**
  * @openapi
  * /api/v1/research/create:
@@ -64,7 +64,7 @@ router.post('/full/create', verify_user_account, ResearchController.comprehensiv
  *           schema:
  *             $ref: '#/components/schemas/Research'
  */
-router.post('/create', verify_user_account, ResearchController.create)
+router.post('/create', verify_user_account, require('../../services/notifications/applications').createResearch(false))
 /**
  *  @openapi
  *  /api/v1/research/all:
@@ -156,7 +156,7 @@ router.get('/department/:dept_id', verify_user_account, ResearchController.getBy
  *                $ref: '#/components/schemas/ResearchResponse'
  *      
 */
-router.get('/:id', verify_user_account, ResearchController.get)
+router.get('/:id', verify_user_account, require('../../services/notifications/applications').researchAccess, ResearchController.get)
 
 /**
  * @openapi
