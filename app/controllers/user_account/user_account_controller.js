@@ -42,7 +42,7 @@ const UserAccountController = {
           },
         ],
       });
-      if (!user) {
+      if (!user || !user.active) {
         res.status(NOT_FOUND).json({ message: "Username does not exist" });
         return;
       }
@@ -66,7 +66,7 @@ const UserAccountController = {
       const loginUser = {
         user_account_id: user.id,
         username: user.username,
-        // role_id: user.role_id,
+        role_id: user.role_id,
         profile_image: user.profile_image,
         email: user.email,
         // token: user.token,
@@ -351,7 +351,7 @@ const UserAccountController = {
       }
     });
 
-    if (!user) {res.status(PRECONDITION_FAILED).json({ message: "User does not exist" });}
+    if (!user || !user.active) {res.status(PRECONDITION_FAILED).json({ message: "User does not exist" });}
     
     const matchCurrent = await bcrypt.compare(req.body.current_password, user.password)
     const matchConfirm = await bcrypt.compare(req.body.confirm_password, user.password)

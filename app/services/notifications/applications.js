@@ -15,7 +15,7 @@ const createResearch = comprehensive => respond(async (req, transaction) => {
   if (!String(req.body.title || '').trim()) fail(400, 'Research title is required.');
   const owner = await db.User.findOne({ where: { user_account_id: req.user.id }, transaction });
   if (!owner) fail(403, 'A user profile is required.');
-  const reviewers = await db.User.findAll({ include: [{ model: db.UserAccount, attributes: ['role_id'] }], transaction });
+  const reviewers = await db.User.findAll({ include: [{ model: db.UserAccount, attributes: ['role_id'], where: { active: true } }], transaction });
   const assigned = reviewers.filter(user => [6, 7].includes(Number(user.UserAccount?.role_id)) ||
     ([3, 4, 5].includes(Number(user.UserAccount?.role_id)) && Number(user.dept_id) === Number(owner.dept_id)));
   const fields = ['title', 'category', 'purpose_id', 'research_duration', 'ethical_considerations', 'submitted_by'];
@@ -41,7 +41,7 @@ const createForm = type => respond(async (req, transaction) => {
   const Model = db[spec.model];
   const excluded = new Set(['id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'deleted_by', 'deleted_at', 'status_id', 'approved_amount']);
   const payload = Object.fromEntries(Object.keys(Model.rawAttributes).filter(key => !excluded.has(key) && req.body[key] !== undefined).map(key => [key, req.body[key]]));
-  const reviewers = await db.User.findAll({ include: [{ model: db.UserAccount, where: { role_id: 7 } }], transaction });
+  const reviewers = await db.User.findAll({ include: [{ model: db.UserAccount, where: { role_id: 7, active: true } }], transaction });
   const child = type === 'assistance' ? 'CAssistanceFormProofs' : 'CAttachmentInfos';
   // Copy only declared child attributes; parent IDs and audit fields are server-owned.
   const childModel = db[child];

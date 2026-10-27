@@ -29,7 +29,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 if (isProduction && !process.env.FRONTEND_URL) {
   throw new Error('FRONTEND_URL must be set to the public frontend origin in production');
 }
-app.use(cors(isProduction ? { origin: process.env.FRONTEND_URL } : {}));
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3002' }));
 
 app.use(bodyParser.urlencoded({
   extended: true,

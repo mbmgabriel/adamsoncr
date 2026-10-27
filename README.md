@@ -57,7 +57,40 @@ director review stages. Staff should see the staff and director fixtures; the
 director should see only the director fixture until staff endorse another item.
 
 In the sibling frontend's ignored `.env.development.local`, use
-`REACT_APP_API_URL=http://localhost:3000`, `PORT=3001`, and `BROWSER=none`, then run
-`npm start` there. Open `http://localhost:3001` to sign in with a test account.
+`REACT_APP_API_URL=http://localhost:3000`, `PORT=3002`, and `BROWSER=none`, then run
+`npm start` there. Open `http://localhost:3002` to sign in with a test account.
 
 See [the research workflow](docs/research-workflow.md) for revision, flexible URB assignment, approval, and completion behavior.
+
+
+## Local admin portal
+
+Keep the backend on port 3000 and set `FRONTEND_URL=http://localhost:3002` and `HOST=127.0.0.1` in the ignored backend `.env`. Keep the local database settings described above. Start Docker Desktop, then:
+
+```bash
+npm run db:local:start
+npm run db:migrate
+npm run db:local:seed
+npm start
+```
+
+The seed command only adds missing fixtures and backfills college links. It does not reset existing accounts, passwords, or review progress. The frontend in `../adamsoncrfrontend` runs on port 3002 with `REACT_APP_API_URL=http://localhost:3000`. Sign in at `http://localhost:3002/admin` with `local_admin` / `password` on a normally seeded local database.
+
+The admin migration creates colleges from existing department descriptions, preserving department IDs, user relationships, and investigator affiliation snapshots. Legacy groups that are offices or centers retain their existing names so an administrator can reorganize them deliberately. Blank descriptions remain unassigned for correction in the department editor. Records are deactivated rather than deleted.
+
+Run the checks against the local database:
+
+```bash
+npm run test:research
+npm run test:admin:local
+npm run test:notifications:local
+```
+
+The admin integration test starts its own ephemeral API, verifies authorization, duplicate rules, last-admin protection, college/department relationships, account activation, publication, application inspection, exports, audit, and CORS, then removes only the fixtures it created. It refuses a non-local database.
+
+See [admin API behavior](docs/admin-portal.md). No production deployment or production migration is performed by local startup.
+
+
+## Development runtime
+
+Use `npm run start:development` to run the local API explicitly in development mode with nodemon auto-reload. The existing local `.env` selects `adamsoncr_local`, port 3000, loopback binding, and frontend origin `http://localhost:3002`. Production remains available through `npm run start:production`. Starting either service does not run database migrations or seed/reset data.

@@ -1,0 +1,15 @@
+const router = require('express').Router();
+const auth = require('../../middlewares/auth/verify_user_account');
+const admin = require('../../middlewares/auth/require_admin');
+const c = require('../../controllers/admin/admin_controller');
+router.use(auth, admin);
+router.get('/session', c.session);
+router.get('/overview', c.overview);
+router.get('/applications', c.applications);
+router.get('/applications/:type/:id', c.detail);
+router.get('/reports/export', c.report);
+router.get('/audit', c.audit);
+router.get('/:resource', c.list);
+router.post('/:resource', c.save);
+router.put('/:resource/:id', c.save);
+module.exports = router;

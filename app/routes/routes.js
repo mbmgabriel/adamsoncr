@@ -25,7 +25,17 @@ const { SPeerReviewProofRoutes } = require("./s_peer_review_proof/s_peer_review_
 const { FormTypesRoutes } = require("./form_types/form_types_routes")
 
 var router = express.Router();
+const adminController = require('../controllers/admin/admin_controller');
+const accountAuth = require('../middlewares/auth/verify_user_account');
+router.use('/admin', require('./admin/admin_routes'));
+router.get('/site-content', accountAuth, adminController.published);
+router.get('/organization', accountAuth, adminController.lookups);
 
+router.use((req,res,next) => {
+  const applicationResources = ['research','research_documents','research_investigators','endorsements','budget_breakdowns','request-assistance-forms','incentive-forms'];
+  if (!['POST','PUT','PATCH','DELETE'].includes(req.method) || !applicationResources.includes(req.path.split('/')[1])) return next();
+  accountAuth(req,res,()=>Number(req.user.role_id)===1 ? res.status(403).json({message:'Administrator application access is read-only. Use the assigned review role for decisions.'}) : next());
+});
 router.use("/notifications", require("./notifications/notifications_routes"));
 router.use("/user", UserAccountRoutes);
 router.use("/roles", UserRoleRoutes);

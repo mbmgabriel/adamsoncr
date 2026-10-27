@@ -12,7 +12,9 @@
         "db:local:seed": "node scripts/seed-local.js",
         "test:research": "node --test tests/*.test.js",
         "test:research:local": "node tests/research-workflow.integration.js",
-        "console": "node --experimental-repl-await bin/console"
+        "console": "node --experimental-repl-await bin/console",
+        "test:admin:local": "node tests/admin-portal.integration.js",
+        "start:development": "NODE_ENV=development nodemon ./bin/www"
     },
     "dependencies": {
         "aws-sdk": "^2.1243.0",

@@ -3,6 +3,7 @@ const router = express.Router()
 
 const { UserAccountController } = require('../../controllers/user_account/user_account_controller')
 const verify_user_account = require('../../middlewares/auth/verify_user_account')
+const adminOnly = require('../../middlewares/auth/require_admin')
 const { upload_service } = require('../../services/upload_service/upload_service')
 
 // router.post('/initialize', UserAccountController.initialize)
@@ -52,7 +53,7 @@ router.post('/login', UserAccountController.login)
  *            schema:
  *              $ref: '#/components/schemas/UserAccount'
 */
-router.post('/register', verify_user_account, UserAccountController.create)
+router.post('/register', verify_user_account, (req,res)=>res.status(403).json({message:'Use the administrator portal to create accounts.'}))
 /**
  *  @openapi
  *  /api/v1/user/all:
@@ -71,7 +72,7 @@ router.post('/register', verify_user_account, UserAccountController.create)
  *              schema:
  *                $ref: '#/components/schemas/UserAccountsGetInformationResponse'
 */
-router.get('/all', verify_user_account, UserAccountController.all)
+router.get('/all', verify_user_account, adminOnly, UserAccountController.all)
 /**
  * @openapi
  * /api/v1/user/filter:
@@ -99,7 +100,7 @@ router.get('/all', verify_user_account, UserAccountController.all)
  *         schema:
  *           type: integer
  */
-router.get('/filter', UserAccountController.getWithFilter)
+router.get('/filter', verify_user_account, UserAccountController.getWithFilter)
 /**
  *  @openapi
  *  /api/v1/user/{id}:
@@ -125,7 +126,7 @@ router.get('/filter', UserAccountController.getWithFilter)
  *                $ref: '#/components/schemas/UserAccountGetInformationResponse'
  *      
 */
-router.get('/:id', verify_user_account, UserAccountController.get)
+router.get('/:id', verify_user_account, (req,res,next)=>Number(req.params.id)===req.user.id ? next() : adminOnly(req,res,next), UserAccountController.get)
 /**
  *  @openapi
  *  /api/v1/user/{id}:
@@ -156,7 +157,7 @@ router.get('/:id', verify_user_account, UserAccountController.get)
  *            schema:
  *              $ref: '#/components/schemas/User'
 */
-router.put('/:id', verify_user_account, UserAccountController.update)
+router.put('/:id', verify_user_account, (req,res)=>res.status(403).json({message:'Use the administrator portal to update account details.'}))
 /**
  *  @openapi
  *  /api/v1/user/{id}:
@@ -178,7 +179,7 @@ router.put('/:id', verify_user_account, UserAccountController.update)
  *          description: Ok
  *      
 */
-router.delete('/:id', verify_user_account, UserAccountController.delete)
+router.delete('/:id', verify_user_account, (req,res)=>res.status(403).json({message:'Use account deactivation in the administrator portal.'}))
 /**
  *  @openapi
  *  /api/v1/user/password/reset/{user_account_id}:
@@ -215,7 +216,7 @@ router.delete('/:id', verify_user_account, UserAccountController.delete)
  *                  type: string
  *                  default: 'newPassword'
 */
-router.put('/password/reset/:user_account_id', verify_user_account, UserAccountController.updatePassword)
+router.put('/password/reset/:user_account_id', verify_user_account, (req,res,next)=>Number(req.params.user_account_id)===req.user.id ? next() : res.status(403).json({message:'You can only change your own password.'}), UserAccountController.updatePassword)
 /**
  * @openapi
  * /api/v1/user/{id}/uploadpicture:
@@ -247,6 +248,6 @@ router.put('/password/reset/:user_account_id', verify_user_account, UserAccountC
  *             schema:
  *               $ref: '#/components/schemas/UserAccountResponses'
  */
-router.put('/:id/uploadpicture', verify_user_account, upload_service.single('profile_image'), UserAccountController.uploadProfilePic);
+router.put('/:id/uploadpicture', verify_user_account, (req,res,next)=>Number(req.params.id)===req.user.id ? next() : res.status(403).json({message:'You can only change your own picture.'}), upload_service.single('profile_image'), UserAccountController.uploadProfilePic);
 
 module.exports.UserAccountRoutes = router

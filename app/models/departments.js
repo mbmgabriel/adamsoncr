@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Departments.init({
     dept_name: DataTypes.STRING,
+    college_id: DataTypes.INTEGER,
+    active: DataTypes.BOOLEAN,
     dept_desc: DataTypes.STRING,
     dept_initials: DataTypes.STRING,
     created_by: DataTypes.INTEGER,
