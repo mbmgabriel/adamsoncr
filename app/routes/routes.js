@@ -28,6 +28,7 @@ var router = express.Router();
 const adminController = require('../controllers/admin/admin_controller');
 const accountAuth = require('../middlewares/auth/verify_user_account');
 router.use('/admin', require('./admin/admin_routes'));
+router.use('/monitoring', require('./monitoring/routes'));
 router.get('/site-content', accountAuth, adminController.published);
 router.get('/organization', accountAuth, adminController.lookups);
 

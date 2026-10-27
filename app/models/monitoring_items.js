@@ -1,0 +1,1 @@
+module.exports=(s,D)=>s.define('MonitoringItem',{project_id:D.INTEGER,key:D.STRING,section:D.STRING,label:D.STRING,position:D.INTEGER,requires_file:D.BOOLEAN,conditional:D.BOOLEAN,status:D.STRING,submitted_on:D.DATEONLY,returned_on:D.DATEONLY,remarks:D.TEXT,revision:{type:D.INTEGER,defaultValue:0}},{tableName:'monitoring_items'});

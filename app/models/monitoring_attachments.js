@@ -1,0 +1,1 @@
+module.exports=(s,D)=>s.define('MonitoringAttachment',{item_id:D.INTEGER,filename:D.STRING,storage_key:D.STRING,content_type:D.STRING,byte_size:D.INTEGER,created_by:D.INTEGER},{tableName:'monitoring_attachments'});

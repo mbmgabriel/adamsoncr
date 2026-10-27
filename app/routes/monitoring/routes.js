@@ -1,0 +1,18 @@
+const router=require('express').Router();
+const auth=require('../../middlewares/auth/verify_user_account');
+const c=require('../../controllers/monitoring/controller');
+const multer=require('multer');
+const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:20*1024*1024,files:1,fields:1,parts:3,fieldSize:40}});
+router.use(auth,(req,res,next)=>[2,6,7].includes(Number(req.user.role_id))?next():res.status(403).json({message:'Project monitoring is available to researchers, CRD staff, and directors.'}));
+router.get('/',c.list);
+router.get('/:id',c.detail);
+const documents=require('../../controllers/monitoring/documents');
+router.get('/:id/export',documents.monitoring);
+router.get('/:id/clearance',documents.clearance);
+router.put('/:id/clearance',documents.save);
+router.get('/:id/clearance/export',documents.clearanceExport);
+router.put('/:id/items/:itemId',c.update);
+router.post('/:id/items/:itemId/files',c.uploadGuard,upload.single('file'),c.upload);
+router.get('/:id/files/:fileId',c.download);
+router.use((error,req,res,next)=>{if(error instanceof multer.MulterError)return res.status(error.code==='LIMIT_FILE_SIZE'?413:400).json({message:error.code==='LIMIT_FILE_SIZE'?'Files must be 20 MB or smaller.':'Upload one file and its revision number.'});next(error);});
+module.exports=router;

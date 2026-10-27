@@ -1,0 +1,234 @@
+{
+  "database": "adamsoncr_local",
+  "note": "Synthetic local fixtures only. Existing records and demo edits are preserved on rerun.",
+  "researchers": [
+    {
+      "username": "demo_anna",
+      "name": "Anna Reyes",
+      "department": "ADAMSON CENTER FOR EXECUTIVE STUDIES (ACES)",
+      "research": [
+        {
+          "id": 48,
+          "title": "DEMO - Community Health and Urban Gardens (Awaiting approval)",
+          "status_id": 1
+        },
+        {
+          "id": 49,
+          "title": "DEMO - Community Health and Urban Gardens (Monitoring in progress)",
+          "status_id": 2
+        },
+        {
+          "id": 50,
+          "title": "DEMO - Community Health and Urban Gardens (Monitoring completed)",
+          "status_id": 2
+        }
+      ],
+      "monitoring": [
+        {
+          "id": 16,
+          "research_id": 49,
+          "progress": {
+            "completed": 8,
+            "applicable": 25,
+            "excluded": 0,
+            "submitted": 0,
+            "changes": 0,
+            "percent": 32,
+            "finished": false
+          },
+          "url": "http://localhost:3002/project-monitoring/16"
+        },
+        {
+          "id": 17,
+          "research_id": 50,
+          "progress": {
+            "completed": 25,
+            "applicable": 25,
+            "excluded": 0,
+            "submitted": 0,
+            "changes": 0,
+            "percent": 100,
+            "finished": true
+          },
+          "url": "http://localhost:3002/project-monitoring/17"
+        }
+      ],
+      "assistance": [
+        {
+          "id": 11,
+          "title": "DEMO - Community Health and Urban Gardens (Assistance Pending)",
+          "status_id": 1
+        },
+        {
+          "id": 12,
+          "title": "DEMO - Community Health and Urban Gardens (Assistance Approved)",
+          "status_id": 10
+        }
+      ],
+      "incentive": [
+        {
+          "id": 9,
+          "title": "DEMO - Community Health and Urban Gardens (Incentive Pending)",
+          "status_id": 1
+        },
+        {
+          "id": 10,
+          "title": "DEMO - Community Health and Urban Gardens (Incentive Approved)",
+          "status_id": 10
+        }
+      ]
+    },
+    {
+      "username": "demo_carlo",
+      "name": "Carlo Santos",
+      "department": "BASIC EDUCATION DEPARTMENT",
+      "research": [
+        {
+          "id": 51,
+          "title": "DEMO - Flood Resilience and Smart Drainage (Awaiting approval)",
+          "status_id": 1
+        },
+        {
+          "id": 52,
+          "title": "DEMO - Flood Resilience and Smart Drainage (Monitoring in progress)",
+          "status_id": 2
+        },
+        {
+          "id": 53,
+          "title": "DEMO - Flood Resilience and Smart Drainage (Monitoring completed)",
+          "status_id": 2
+        }
+      ],
+      "monitoring": [
+        {
+          "id": 18,
+          "research_id": 52,
+          "progress": {
+            "completed": 16,
+            "applicable": 25,
+            "excluded": 0,
+            "submitted": 0,
+            "changes": 0,
+            "percent": 64,
+            "finished": false
+          },
+          "url": "http://localhost:3002/project-monitoring/18"
+        },
+        {
+          "id": 19,
+          "research_id": 53,
+          "progress": {
+            "completed": 25,
+            "applicable": 25,
+            "excluded": 0,
+            "submitted": 0,
+            "changes": 0,
+            "percent": 100,
+            "finished": true
+          },
+          "url": "http://localhost:3002/project-monitoring/19"
+        }
+      ],
+      "assistance": [
+        {
+          "id": 13,
+          "title": "DEMO - Flood Resilience and Smart Drainage (Assistance Pending)",
+          "status_id": 1
+        },
+        {
+          "id": 14,
+          "title": "DEMO - Flood Resilience and Smart Drainage (Assistance Approved)",
+          "status_id": 10
+        }
+      ],
+      "incentive": [
+        {
+          "id": 11,
+          "title": "DEMO - Flood Resilience and Smart Drainage (Incentive Pending)",
+          "status_id": 1
+        },
+        {
+          "id": 12,
+          "title": "DEMO - Flood Resilience and Smart Drainage (Incentive Approved)",
+          "status_id": 10
+        }
+      ]
+    },
+    {
+      "username": "demo_mia",
+      "name": "Mia Cruz",
+      "department": "COLLEGE OF ARCHITECTURE",
+      "research": [
+        {
+          "id": 54,
+          "title": "DEMO - Digital Learning and Student Engagement (Awaiting approval)",
+          "status_id": 1
+        },
+        {
+          "id": 55,
+          "title": "DEMO - Digital Learning and Student Engagement (Monitoring in progress)",
+          "status_id": 2
+        },
+        {
+          "id": 56,
+          "title": "DEMO - Digital Learning and Student Engagement (Monitoring completed)",
+          "status_id": 2
+        }
+      ],
+      "monitoring": [
+        {
+          "id": 20,
+          "research_id": 55,
+          "progress": {
+            "completed": 4,
+            "applicable": 25,
+            "excluded": 0,
+            "submitted": 0,
+            "changes": 0,
+            "percent": 16,
+            "finished": false
+          },
+          "url": "http://localhost:3002/project-monitoring/20"
+        },
+        {
+          "id": 21,
+          "research_id": 56,
+          "progress": {
+            "completed": 25,
+            "applicable": 25,
+            "excluded": 0,
+            "submitted": 0,
+            "changes": 0,
+            "percent": 100,
+            "finished": true
+          },
+          "url": "http://localhost:3002/project-monitoring/21"
+        }
+      ],
+      "assistance": [
+        {
+          "id": 15,
+          "title": "DEMO - Digital Learning and Student Engagement (Assistance Pending)",
+          "status_id": 1
+        },
+        {
+          "id": 16,
+          "title": "DEMO - Digital Learning and Student Engagement (Assistance Approved)",
+          "status_id": 10
+        }
+      ],
+      "incentive": [
+        {
+          "id": 13,
+          "title": "DEMO - Digital Learning and Student Engagement (Incentive Pending)",
+          "status_id": 1
+        },
+        {
+          "id": 14,
+          "title": "DEMO - Digital Learning and Student Engagement (Incentive Approved)",
+          "status_id": 10
+        }
+      ]
+    }
+  ]
+}
