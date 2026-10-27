@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   UserAccount.init(
     {
+      active: { type: DataTypes.BOOLEAN, defaultValue: true },
       username: {
         type: DataTypes.STRING,
         allowNull: false,

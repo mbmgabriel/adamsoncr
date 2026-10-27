@@ -33,7 +33,8 @@ const DepartmentsController = {
   all: async (req, res) => {
     try {
       const departmentss = await Departments.findAll({
-        attributes: ['dept_name','dept_initials','dept_desc'],
+        attributes: ['id','dept_name','dept_initials','dept_desc','college_id','active'],
+        where: { active: true },
       });
       res.status(OK).json({Departments: departmentss});
     } catch (error) {
@@ -46,7 +47,8 @@ const DepartmentsController = {
     await sequelize.transaction(async (t) => {
       try {
         const departmentss = await Departments.findAll({
-          attributes: ['dept_name','dept_initials','dept_desc'],
+          attributes: ['id','dept_name','dept_initials','dept_desc','college_id','active'],
+        where: { active: true },
           where: {id: req.params.id},
         });
 

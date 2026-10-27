@@ -28,6 +28,16 @@ async function seed() {
       await require(`../database/seeders/${filename}`).up(db.sequelize.getQueryInterface(), Sequelize);
     }
   }
+  // Reference rows may be seeded after the college migration on a fresh database.
+  await db.sequelize.transaction(async transaction => {
+    const departments = await db.Departments.findAll({ transaction });
+    for (const department of departments) {
+      if (department.college_id || !String(department.dept_desc || '').trim()) continue;
+      const name = department.dept_desc.trim();
+      const [college] = await db.Colleges.findOrCreate({ where: { name_key: name.toLowerCase() }, defaults: { name, active: true }, transaction });
+      await department.update({ college_id: college.id }, { transaction });
+    }
+  });
   // Shared form statuses: Approved applies to assistance and incentive forms.
   for (const [id, status] of [[10, 'Approved'], [11, 'Rejected']]) {
     await db.StatusTables.findOrCreate({ where: { id }, defaults: { status, created_by: 1 } });

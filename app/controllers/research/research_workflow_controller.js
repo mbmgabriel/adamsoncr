@@ -35,7 +35,7 @@ const ResearchWorkflowController = {
     try {
       const members = await db.User.findAll({
         attributes: ['id', 'first_name', 'middle_name', 'last_name', 'dept_id'],
-        include: [{ model: db.UserAccount, attributes: ['id', 'role_id', 'email'], where: { role_id: 8 } },
+        include: [{ model: db.UserAccount, attributes: ['id', 'role_id', 'email'], where: { role_id: 8, active: true } },
           { model: db.Departments, attributes: ['dept_name'] }],
         order: [['last_name', 'ASC'], ['id', 'ASC']],
       });
@@ -93,7 +93,7 @@ const ResearchWorkflowController = {
       fail(400, 'Select at least two distinct URB members.');
     }
     const members = await db.User.findAll({ where: { id: ids },
-      include: [{ model: db.UserAccount, where: { role_id: 8 }, attributes: ['role_id'] }], transaction });
+      include: [{ model: db.UserAccount, where: { role_id: 8, active: true }, attributes: ['role_id'] }], transaction });
     if (members.length !== ids.length) fail(400, 'Every selected reviewer must be an active URB member.');
     const existing = endorsements.filter(e => Number(e.User?.UserAccount?.role_id) === 8);
     if (existing.some(e => e.status_id === 6 && !ids.includes(e.endorsement_rep_id))) {

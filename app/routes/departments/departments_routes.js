@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+router.use((req,res,next) => ['POST','PUT','DELETE'].includes(req.method) ? res.status(403).json({message:'Use the administrator portal to manage these records.'}) : next());
 
 const { DepartmentsController } = require('../../controllers/departments/departments_controller')
 const verify_user_account = require('../../middlewares/auth/verify_user_account')

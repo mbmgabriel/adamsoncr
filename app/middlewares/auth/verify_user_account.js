@@ -12,7 +12,7 @@ const authenticateUser = async (req, res, next) => {
         const decoded = await TokenService.verifyToken(authorizationHeader.split(' ')[1]);
         
         const user = await UserAccount.findByPk(decoded.data);
-        if (!user) {
+        if (!user || !user.active) {
           return res.status(FORBIDDEN).send({ message: 'Invalid token!' });
         }
         req.user = user;
