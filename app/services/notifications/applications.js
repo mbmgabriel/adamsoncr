@@ -39,7 +39,7 @@ function includes(type) {
 const createForm = type => respond(async (req, transaction) => {
   const spec = specs[type];
   const Model = db[spec.model];
-  const excluded = new Set(['id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'deleted_by', 'deleted_at', 'status_id']);
+  const excluded = new Set(['id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'deleted_by', 'deleted_at', 'status_id', 'approved_amount']);
   const payload = Object.fromEntries(Object.keys(Model.rawAttributes).filter(key => !excluded.has(key) && req.body[key] !== undefined).map(key => [key, req.body[key]]));
   const reviewers = await db.User.findAll({ include: [{ model: db.UserAccount, where: { role_id: 7 } }], transaction });
   const child = type === 'assistance' ? 'CAssistanceFormProofs' : 'CAttachmentInfos';
@@ -99,10 +99,22 @@ const reviewForm = respond(async (req, transaction) => {
   const remarks = req.body.remarks === undefined ? (assignment.remarks || '') : String(req.body.remarks).trim();
   if (![10, 11].includes(status)) fail(400, 'Choose approve or disapprove.');
   if ([10, 11].includes(Number(form.status_id)) && Number(form.status_id) !== status) fail(409, 'This application already has a final decision.');
-  const changed = Number(assignment.status_id) !== status || String(assignment.remarks || '') !== remarks;
+  let approvedAmount;
+  if (status === 10) {
+    const value = req.body.approved_amount;
+    if (!['string', 'number'].includes(typeof value) || !/^\d+(\.\d{1,2})?$/.test(String(value)) ||
+        !Number.isFinite(Number(value)) || Number(value) <= 0 || Number(value) > 9999999999.99) {
+      fail(400, 'An approved amount greater than zero with up to two decimal places is required.');
+    }
+    approvedAmount = Number(value).toFixed(2);
+    if (Number(form.status_id) === 10 && form.approved_amount != null && Number(form.approved_amount) !== Number(approvedAmount)) {
+      fail(409, 'The approved amount cannot be changed after approval.');
+    }
+  }
+  const changed = (status === 10 && Number(form.approved_amount) !== Number(approvedAmount)) || Number(assignment.status_id) !== status || String(assignment.remarks || '') !== remarks;
   if (changed) {
     await assignment.update({ status_id: status, remarks, updated_by: req.user.id }, { transaction });
-    await form.update({ status_id: status, updated_by: req.user.id }, { transaction });
+    await form.update({ status_id: status, ...(status === 10 ? { approved_amount: approvedAmount } : {}), updated_by: req.user.id }, { transaction });
     await formEvent(type, form, 'decision', req.user, transaction, remarks);
   }
   return { body: { Endorsements: assignment, Message: 'Application decision saved.' } };

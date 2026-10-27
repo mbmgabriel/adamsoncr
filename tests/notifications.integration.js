@@ -102,12 +102,16 @@ async function main() {
     await request(stranger.account, `/${route}/${form.id}`, 'GET', undefined, 404);
     await request(stranger.account, `/${route}/all`, 'GET', undefined, 403);
     const formType = type === 'assistance' ? 2 : 3;
-    await request(stranger.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10 }, 403);
-    await request(director.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10, remarks: 'Approved for support.' });
+    await request(stranger.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10, approved_amount: 2500.50 }, 403);
+    for (const value of [undefined, null, '', 0, -1, '1.001', 'invalid']) {
+      await request(director.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10, approved_amount: value }, 400);
+    }
+    await request(director.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10, approved_amount: 2500.50, remarks: 'Approved for support.' });
     assert.equal(await count(owner, type, form.id), 1);
-    await request(director.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10, remarks: 'Approved for support.' });
+    assert.equal(Number((await request(owner.account, `/${route}/user`))[key].find(row => row.id === form.id).approved_amount), 2500.50);
+    await request(director.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10, approved_amount: 2500.50, remarks: 'Approved for support.' });
     assert.equal(await count(owner, type, form.id), 1);
-    await request(director.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10, remarks: 'Updated remarks.' });
+    await request(director.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 10, approved_amount: 2500.50, remarks: 'Updated remarks.' });
     assert.equal(await count(owner, type, form.id), 2);
     await request(director.account, `/endorsements/status/${form.id}/${formType}`, 'PUT', { status_id: 11 }, 409);
     await db.sequelize.transaction(async transaction => {
