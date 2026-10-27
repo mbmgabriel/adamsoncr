@@ -145,6 +145,7 @@ async function cleanup() {
     const formType = type === 'research' ? 1 : type === 'assistance' ? 2 : 3;
     await db.Endorsements.destroy({ where: { research_id: id, form_type_id: formType }, force: true });
     if (type === 'research') {
+      await require('./helpers/monitoring-fixtures')(id);
       for (const model of [db.ResearchVersions, db.ResearchInvestigators, db.BudgetBreakdowns, db.ResearchDocuments]) await model.destroy({ where: { research_id: id }, force: true });
       await db.Research.destroy({ where: { id }, force: true });
     } else await (type === 'assistance' ? db.RequestAssistanceForms : db.IncentiveForms).destroy({ where: { id }, force: true });

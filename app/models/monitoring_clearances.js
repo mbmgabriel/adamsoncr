@@ -1,0 +1,1 @@
+module.exports=(s,D)=>s.define('MonitoringClearance',{project_id:D.INTEGER,form_version:D.STRING,data:D.TEXT,revision:D.INTEGER,created_by:D.INTEGER,updated_by:D.INTEGER},{tableName:'monitoring_clearances'});

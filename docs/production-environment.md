@@ -41,3 +41,5 @@ security review. Review public `/api-docs` and static `storage` access, dependen
 security, upload limits, authentication protections, backups, and monitoring
 before launch. No production database connections or migrations were performed
 while preparing this configuration.
+
+For project monitoring, also persist and back up `private_uploads/monitoring` alongside its database metadata. Keep this directory outside any public static route. Apply the project-monitoring migration before starting this backend version.

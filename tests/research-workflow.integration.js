@@ -128,12 +128,25 @@ async function main() {
   await pendingDirector.reload();
   assert.equal(pendingDirector.status_id, 2);
   assert.equal(complete.workflow.stage, 'completed');
+  const monitored = await db.MonitoringProject.findOne({ where: { research_id: researchId } });
+  assert.ok(monitored, 'Director completion enrolls the research in monitoring');
+  assert.equal(await db.MonitoringItem.count({ where: { project_id: monitored.id } }), 25);
+  await request(owner, `/monitoring/${monitored.id}`);
+  await request(staff, `/monitoring/${monitored.id}`);
+  await request(director, `/monitoring/${monitored.id}`);
   await request(staff, `${path}/urb-members`, 'PUT', { member_ids: ids }, 409);
   await request(owner, `${path}/resubmit`, 'PUT', body, 409);
   console.log(`Passed ${checks} local API checks: revision/versioning, ordered endorsements, flexible URB assignment, visibility, all-member approval, and director completion.`);
 }
 main().catch(error => { console.error(error.stack); process.exitCode = 1; }).finally(async () => {
   if (researchId) {
+    const monitored = await db.MonitoringProject.findOne({ where: { research_id: researchId } });
+    if (monitored) {
+      await db.MonitoringClearance.destroy({ where: { project_id: monitored.id }, force: true });
+      await db.MonitoringEvent.destroy({ where: { project_id: monitored.id }, force: true });
+      await db.MonitoringItem.destroy({ where: { project_id: monitored.id }, force: true });
+      await monitored.destroy({ force: true });
+    }
     await db.notifications.destroy({ where: { application_type: 'research', application_id: researchId }, force: true });
     for (const model of [db.Endorsements, db.ResearchVersions, db.ResearchInvestigators, db.BudgetBreakdowns, db.ResearchDocuments]) {
       await model.destroy({ where: { research_id: researchId } });

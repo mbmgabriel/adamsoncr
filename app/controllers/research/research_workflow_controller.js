@@ -121,6 +121,7 @@ const ResearchWorkflowController = {
     const director = endorsements.find(entry => entry.endorsement_rep_id === actor.id);
     await director.update({ status_id: 2, updated_by: req.user.id }, { transaction });
     await research.update({ status_id: 2, updated_by: req.user.id }, { transaction });
+    await require('../../services/monitoring/service').enroll(research, transaction, req.user);
     await researchEvent(research, 'completed', req.user, transaction);
     return { message: 'Research completed.', Research: research };
   }),

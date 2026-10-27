@@ -94,3 +94,11 @@ See [admin API behavior](docs/admin-portal.md). No production deployment or prod
 ## Development runtime
 
 Use `npm run start:development` to run the local API explicitly in development mode with nodemon auto-reload. The existing local `.env` selects `adamsoncr_local`, port 3000, loopback binding, and frontend origin `http://localhost:3002`. Production remains available through `npm run start:production`. Starting either service does not run database migrations or seed/reset data.
+
+## Project monitoring
+
+The F-CRD-003 monitoring module follows director approval completion. Setup, permissions, private uploads, progress rules, and verification commands are documented in [docs/project-monitoring.md](docs/project-monitoring.md).
+
+## Multi-researcher demo data
+
+Run `npm run db:local:demo` after the local migrations and base fixtures to add completed/in-progress research and monitoring, plus pending/approved assistance and incentive forms for `demo_anna`, `demo_carlo`, and `demo_mia` (local password `password`). The script is additive and restricted to `adamsoncr_local` on localhost. See [the dataset guide](docs/local-demo-data.md) and [record manifest](docs/local-demo-manifest.json).
