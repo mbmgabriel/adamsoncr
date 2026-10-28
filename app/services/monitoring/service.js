@@ -46,4 +46,5 @@ async function itemFor(project,id,transaction){
 function checkRevision(item,value){if(!['number','string'].includes(typeof value)||!Number.isSafeInteger(Number(value))||value===''||Number(value)!==item.revision)fail(409,'This requirement changed. Reload the project before saving.');}
 function date(value){if(value===null||value==='')return null;if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value)||!Number.isFinite(Date.parse(value))||new Date(value).toISOString().slice(0,10)!==value)fail(400,'Use a valid calendar date.');return value;}
 const serialize=project=>({...project.toJSON(),snapshot:JSON.parse(project.snapshot)});
-module.exports={enroll,syncApproved,access,itemFor,checkRevision,date,fail,log,serialize,progress};
+const today=(now=new Date())=>{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);const value=type=>parts.find(p=>p.type===type).value;return `${value('year')}-${value('month')}-${value('day')}`;};
+module.exports={today,enroll,syncApproved,access,itemFor,checkRevision,date,fail,log,serialize,progress};
