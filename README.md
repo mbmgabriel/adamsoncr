@@ -1,13 +1,13 @@
 # Installation
-Create `.env` file
+Create a local `.env` file (environment files are not tracked in Git). See [production configuration](docs/production-environment.md) or the local settings below.
 ```bash
-  cp .env.sample .env
+  touch .env
 ```
 
 
 Edit `.env` file and provide required credentials
 ```bash
-  nano .env`
+  nano .env
 ```
 
 Install packages

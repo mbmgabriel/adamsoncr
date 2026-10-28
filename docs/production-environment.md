@@ -1,9 +1,10 @@
 # Production environment
 
-On the deployment server, copy `.env.production.example` to `.env` and replace
-every `CHANGE_ME` value. The application loads `.env`; it does not automatically
-load `.env.production`. Alternatively, inject variables using the hosting
-platform's environment settings or secret manager.
+On the deployment server, create an ignored `.env` file and configure the values
+described below, including `NODE_ENV=production` and `PORT=3008`. Environment files
+and templates are not tracked in Git. The application loads `.env`; it does not
+automatically load `.env.production`. Alternatively, inject variables using the
+hosting platform's environment settings or secret manager.
 
 Rotate the database password and JWT secret previously shared in chat. Create a
 dedicated SQL Server application login instead of using `sa`. Generate the new
