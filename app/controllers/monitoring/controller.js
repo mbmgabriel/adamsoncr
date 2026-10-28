@@ -34,7 +34,7 @@ const c={
       if(['changes','na'].includes(status)&&!remarks)service.fail(400,'Explain the changes requested or why this requirement is not applicable.');
       if(status==='na'&&!item.conditional)service.fail(400,'This is a mandatory checklist requirement.');
       if(status==='submitted'&&item.requires_file&&!await db.MonitoringAttachment.count({where:{item_id:item.id},transaction}))service.fail(400,'No attachment has been submitted.');
-      const submitted_on=service.date(req.body.submitted_on),returned_on=service.date(req.body.returned_on);
+      const submitted_on=status==='complete'&&!req.body.submitted_on?item.submitted_on||service.today():service.date(req.body.submitted_on),returned_on=service.date(req.body.returned_on);
       if(returned_on&&(!submitted_on||returned_on<submitted_on))service.fail(400,'Date returned must be on or after date submitted.');
       const before=item.toJSON();
       await item.update({status,remarks,submitted_on,returned_on,revision:item.revision+1},{transaction});
@@ -57,7 +57,7 @@ const c={
       service.checkRevision(item,req.body.revision);
       await fs.mkdir(uploadRoot,{recursive:true});await fs.writeFile(path.join(uploadRoot,storageKey),file.buffer,{flag:'wx'});saved=true;
       const attachment=await db.MonitoringAttachment.create({item_id:item.id,filename:path.basename(file.originalname).replace(/[\x00-\x1f\x7f]/g,'').slice(0,240)||'attachment'+ext,storage_key:storageKey,content_type:type,byte_size:file.size,created_by:req.user.id},{transaction});
-      await item.update({status:'submitted',submitted_on:new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Manila'}),returned_on:null,revision:item.revision+1},{transaction});
+      await item.update({status:'submitted',submitted_on:service.today(),returned_on:null,revision:item.revision+1},{transaction});
       await service.log(project.id,item.id,req.user,'file_submitted',{attachment_id:attachment.id,filename:attachment.filename},transaction);
       return {message:'File submitted for CRD review.'};
     });}catch(e){if(saved)await fs.unlink(path.join(uploadRoot,storageKey)).catch(()=>{});throw e;}

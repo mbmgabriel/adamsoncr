@@ -56,6 +56,11 @@ async function main(){
  const optional=detail.items.find(i=>i.key==='patent');
  await request(director,`${route}/items/${optional.id}`,'PUT',{...update,status:'na',remarks:'Not applicable to this project.',submitted_on:'',revision:optional.revision});
  detail=await request(owner,route);assert.equal(detail.progress.applicable,24);assert.equal(detail.progress.excluded,1);assert(detail.events.some(e=>e.action==='file_submitted'));assert(detail.events.some(e=>e.action==='checklist_updated'));
+ const automatic=detail.items.find(i=>i.key==='fund_1');
+ await request(staff,`${route}/items/${automatic.id}`,'PUT',{status:'complete',remarks:'Completed today.',submitted_on:'',returned_on:'',revision:automatic.revision});
+ const dated=await db.MonitoringItem.findByPk(automatic.id);assert.equal(dated.submitted_on,require('../app/services/monitoring/service').today());
+ await request(staff,`${route}/items/${automatic.id}`,'PUT',{status:'complete',remarks:'Updated note.',submitted_on:'',returned_on:'',revision:dated.revision});
+ assert.equal((await db.MonitoringItem.findByPk(automatic.id)).submitted_on,dated.submitted_on);
  const summary=await request(owner,'/monitoring');assert(summary.projects.some(p=>p.id===project.id));await request(staff,'/monitoring');assert.equal(await db.MonitoringProject.count({where:{research_id:research.id}}),1);
  // Completion-gated exports and researcher-owned clearance persist independently of office signatures.
  await request(owner,`${route}/export`,'GET',null,409);
